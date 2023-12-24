@@ -1,0 +1,106 @@
+//icon about
+@font-face {
+    font-family: "iconfont";
+    src: url('@assets/style/iconfont/iconfont.woff2') format('woff2'),
+        url('@assets/style/iconfont/iconfont.woff') format('woff'),
+        url('@assets/style/iconfont/iconfont.ttf') format('truetype');
+}
+
+.iconfont {
+    font-family: "iconfont" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Pause:before {
+    content: "\e605";
+}
+
+.icon-poweroff:before {
+    content: "\e774";
+}
+
+.icon-redo:before {
+    content: "\e831";
+}
+
+
+// color
+$default-text-color: #2c3e50;
+$blue: #1963dd;
+$white: #fcfcfc;
+$gray: #7a7a7a;
+$black: #444444;
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+i {
+    font-style: normal;
+}
+
+// html {
+//     overflow-y: overlay;
+// }
+
+::-webkit-scrollbar {
+    width: 0;
+}
+
+// ::-webkit-scrollbar-thumb {
+//     background: #22bbff;
+//     ; // 滑块颜色
+//     border-radius: 5px; // 滑块圆角
+//     border: 6px solid rgba(0, 0, 0, 0);
+//     box-shadow: 8px 0 0 #A5ADB7 inset;
+// }
+
+%main-title {
+    font-size: 34px;
+    margin: 40px 24px;
+}
+
+%flex-vertical-center {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+%flex-relative-center {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+%small-text {
+    font-size: 14px;
+    font-weight: lighter;
+}
+
+%middle-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.btn {
+    color: $white;
+    @extend %flex-vertical-center;
+    background-color: $blue;
+}
+
+.logo {
+    display: inline-block;
+    height: 50%;
+    position: relative;
+
+    img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+}

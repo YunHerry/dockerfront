@@ -1,0 +1,26 @@
+dockerfront-admin/DS_Store
+dockerfront-admin/node_modules
+dockerfront/node_modules
+dockerfront-doc/node_modules
+dockerfront/dist
+dockerfront-admin/dist
+dockerfront-doc/dist
+# local env files
+./dockerfront-admin/.env.local
+./dockerfront-admin/.env.*.local
+./dockerfront/.env.local
+./dockerfront/.env.*.local
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
