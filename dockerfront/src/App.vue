@@ -22,7 +22,7 @@ html,body,#app {
 }
 </style>
 <script lang="ts" setup>
-import { useRecaptchaProvider } from 'vue-recaptcha'
+// import { useRecaptchaProvider } from 'vue-recaptcha'
 
-useRecaptchaProvider();
+// useRecaptchaProvider();
 </script>
