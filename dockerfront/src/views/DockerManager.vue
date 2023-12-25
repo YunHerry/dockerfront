@@ -22,12 +22,17 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="300">
+            <el-table-column label="操作">
               <template #default="scope">
-                <RouterLink :to="'/webshell/1111111111111'">
+                <!-- <RouterLink :to="'/webshell/1111111111111'">
                   <el-button size="small" @click="">编辑参数</el-button>
+                </RouterLink> -->
+                <RouterLink :to="'/webshell/1111111111111'">
+                  <el-button size="small" @click="">WebShell</el-button>
                 </RouterLink>
-                <el-button size="small" @click="">WebShell</el-button>
+                <RouterLink :to="'/dashboard'">
+                  <el-button size="small" @click="">仪表盘</el-button>
+                </RouterLink>
               </template>
             </el-table-column>
           </el-table>

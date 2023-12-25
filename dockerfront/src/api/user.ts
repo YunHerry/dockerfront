@@ -75,7 +75,7 @@ import { continerStatus } from "@/constant";
       method: "put",
     });
   }
-  export function exec(id:string,command:string,loc:string) {
+  export function exec(id:string,command:string,loc:string):Promise<requestResponse<Array<string>>>  {
     return request({
       url: `/ibs/api/containers/${id}/exec`,
       method: "post",
