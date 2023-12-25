@@ -1,6 +1,6 @@
 <template>
-  <div class="web-shell-content" @keyup="keyup" @click="clickShell">
-    <!-- <div class="now-command" v-for="commandItem in commandHistoryList">
+  <!-- <div class="web-shell-content"> -->
+  <!-- <div class="now-command" v-for="commandItem in commandHistoryList">
       {{ commandItem }}
     </div>
     <div class="now-command">
@@ -12,8 +12,13 @@
         type="text"
       />
     </div> -->
-    <terminal name="my-terminal" @exec-cmd="onExecCmd"></terminal>
-  </div>
+  <terminal
+    name="my-terminal"
+    @exec-cmd="onExecCmd"
+    :show-header="false"
+    :context="context"
+  ></terminal>
+  <!-- </div> -->
 </template>
 <style lang="scss">
 .web-shell-content {
@@ -42,29 +47,62 @@
 import { exec } from "@/api/user";
 import { Ref, ref } from "vue";
 import { useRoute } from "vue-router";
-import Terminal from "vue-web-terminal"
+import Terminal from "vue-web-terminal";
 const route = useRoute();
 const info = route.params.id;
-const command: any = ref();
-const commandValue: Ref<string> = ref("");
-const commandHistoryList: Ref<Array<string>> = ref([]);
-function clickShell() {
-  console.log();
-  command.value.focus();
-}
-function keyup(e: KeyboardEvent) {
-  console.log(e);
-  if (e.key == "Enter") {
-    commandHistoryList.value.push(commandValue.value);
-    commandValue.value = "";
+
+const context = ref("/bin");
+function onExecCmd(
+  key: string,
+  command: string,
+  success: Function,
+  failed: Function
+) {
+  if (/^cd\s(.+)/.test(command)) {
+    const value = (/^cd\s(.+)/.exec(command) as RegExpExecArray)[0].split(
+      " "
+    )[1];
     exec(
-      "eb8b0fdf26166613c1c858afa9225aa2fe6b07cbb6d09a80cc2b47be258ce065",
-      "ls",
-      "/bin"
+      "c54cf249c1e6080b4ec5ec34d12c742d56bee46c1fe3321b768997099dca73d2",
+      `cd ${value}`,
+      context.value
     ).then((res) => {
-      console.log(JSON.parse(res.data));
-      commandHistoryList.value.push("commandValue.value");
+      for (const item of res.data) {
+        // failed(item);
+        success({
+          type: "normal",
+          tag: "",
+          content: item,
+        });
+      }
     });
+
+    return;
   }
+  if (key === "fail") {
+    failed("Something wrong!!!");
+  } else {
+    // let allClass = ["success", "error", "system", "info", "warning"];
+
+    // let clazz = allClass[Math.floor(Math.random() * allClass.length)];
+    
+    execCommand(command).then(res=>{
+      for (const item of res.data) {
+        // failed(item);
+        success({
+          type: "normal",
+          tag: "",
+          content: item,
+        });
+      }
+    })
+  }
+}
+function execCommand(command:string):Promise<requestResponse<Array<string>>> {
+  return exec(
+    "c54cf249c1e6080b4ec5ec34d12c742d56bee46c1fe3321b768997099dca73d2",
+    command,
+    context.value
+  );
 }
 </script>
