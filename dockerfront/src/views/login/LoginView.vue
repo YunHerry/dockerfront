@@ -7,10 +7,13 @@
 </template>
 <script lang="ts" setup>
 import store from '@/store';
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 let username:string = "";
 let password:string = "";
 const router = useRouter();
+const route = useRoute();
+const dir = route.params.red;
+console.log(dir);
 function setUserName(value:string) {
     username = value;
 }
@@ -20,7 +23,7 @@ function setPassword(value:string) {
 function login() {
   store.dispatch("user/login",{username: username,password: password}).then(()=>{
     console.log("触发");
-    router.push('/dockerManager');
+    router.push("/dockerManager");
   }).catch(err=>{
     console.log(err);
   })

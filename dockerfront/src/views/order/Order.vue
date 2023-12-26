@@ -6,92 +6,26 @@
         <div class="order-content">
           <div class="main-title">订单</div>
           <div class="menu">
-            <a href="">快速配置</a>
-            <a href="">自定义配置</a>
+            <a
+              :class="nowOptionIndex == 0 ? 'active' : ''"
+              @click="tapOption(0)"
+              >快速配置</a
+            >
+            <a
+              :class="nowOptionIndex == 1 ? 'active' : ''"
+              @click="tapOption(1)"
+              >自定义配置</a
+            >
           </div>
-          <div class="base-content">
-            <div class="title">基础配置</div>
-            <div class="config-from">
-              <div class="instance base_item">
-                <div class="part-title">实例</div>
-                <div class="items">
-                  <div>
-                    基础配置 (2H2GB)
-                    <div class="produce_description">适合一定访问量的站点</div>
-                    <div class="info">系统盘: 50GB</div>
-                  </div>
-                  <div>
-                    <el-skeleton :rows="3">
-                      <template #template>
-                        <div>
-                          <el-skeleton-item variant="p" style="width: 50%" />
-                          <el-skeleton-item
-                            variant="text"
-                            style="margin-top: 4px; width: 80%"
-                          />
-                          <el-skeleton-item variant="p" style="width: 40%" />
-                        </div>
-                      </template>
-                    </el-skeleton>
-                  </div>
-                  <div></div>
-                </div>
-              </div>
-              <div class="mirror base_item">
-                <div class="part-title">镜像</div>
-                <div class="mirror-content">
-                  <div class="menu">
-                    <a href="">快速配置</a>
-                    <a href="">自定义配置</a>
-                  </div>
-                  <div class="mirror-panel">
-                    <div class="mirror-item">
-                      <div class="mirror-img">
-                        <img
-                          src="https://cloudcache.tencent-cloud.cn/qcloud/ui/cvm-new-buy/src/styles/images/mirror/TencentOS-weak.svg"
-                          alt=""
-                        />
-                      </div>
-                      <div class="mirror-item_title">Centos</div>
-                    </div>
-                    <div class="mirror-item">
-                      <div class="mirror-img">
-                        <img
-                          src="https://cloudcache.tencent-cloud.cn/qcloud/ui/cvm-new-buy/src/styles/images/mirror/TencentOS-weak.svg"
-                          alt=""
-                        />
-                      </div>
-                      <div class="mirror-item_title">Centos</div>
-                    </div>
-                    <div class="mirror-item">
-                      <div class="mirror-img">
-                        <img
-                          src="https://cloudcache.tencent-cloud.cn/qcloud/ui/cvm-new-buy/src/styles/images/mirror/TencentOS-weak.svg"
-                          alt=""
-                        />
-                      </div>
-                      <div class="mirror-item_title">Centos</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="bandwidth base_item">
-                <div class="part-title">带宽</div>
-                <div class="bandwidth-content">
-                  <el-slider
-                    v-model="bandwidth"
-                    :max="100"
-                    :min="1"
-                    show-input
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <RouterView v-slot="{ Component }">
+            <transition>
+              <component :is="Component" />
+            </transition>
+          </RouterView>
         </div>
       </el-main>
       <el-footer>
-        <div class="tab-item">
+        <!-- <div class="tab-item">
           时长:
           <el-select
             v-model="worthy"
@@ -100,7 +34,7 @@
           ></el-select>
           数量:
           <el-input-number v-model="amount" :min="1" :max="10" />
-        </div>
+        </div> -->
         <div class="tab-item">
           费用
           <button class="btn">立刻购买</button>
@@ -110,11 +44,34 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import UserTop from "@/components/user/UserTop.vue";
+import { Ref, onMounted, ref } from "vue";
+import { getPacket, getImages } from "@/api/user";
 let bandwidth = ref(0);
 let worthy = ref();
 let amount = ref(1);
+const nowInstanceIndex = ref(0);
+const nowOptionIndex = ref(0);
+const nowImageName = ref("");
+const packetList: Ref<Array<packet>> = ref([]);
+const imageList: Ref<Array<image>> = ref([]);
+onMounted(() => {
+  getPacket({ page: 1, pageSize: 4 }).then((res) => {
+    packetList.value.push(...res.data);
+  });
+  getImages({
+    page: 1,
+    pageSize: 6,
+  }).then((res) => {
+    console.log(res);
+  });
+});
+function tapInstance(index: number) {
+  nowInstanceIndex.value = index;
+}
+
+function tapOption(index: number) {
+  nowOptionIndex.value = index;
+}
 </script>
 <style lang="scss" scoped>
 .el-footer {
@@ -163,6 +120,9 @@ let amount = ref(1);
   cursor: pointer;
   transition: background-color 0.2s;
 }
+.mirror-item.active {
+  border-color: #0052d9;
+}
 .mirror-img {
   height: 32px;
 }
@@ -207,6 +167,9 @@ let amount = ref(1);
       flex-direction: column;
       color: rgba(0, 0, 0, 0.6);
     }
+  }
+  div.active {
+    border-color: #0052d9;
   }
 }
 .config-from {
@@ -289,9 +252,10 @@ let amount = ref(1);
       padding: 0 40px;
       position: relative;
       line-height: 48px;
+      cursor: pointer;
     }
     a:after {
-      border-bottom-color: #0052d9 !important;
+      border-bottom-color: #e7eaef !important;
       width: 100%;
       transition: border-color 0.15s ease-in-out, width 0.15s ease-in-out,
         height 0.15s ease-in-out;
@@ -302,6 +266,9 @@ let amount = ref(1);
       box-sizing: border-box;
       height: 2px;
       border-bottom: 2px solid;
+    }
+    a.active:after {
+      border-bottom-color: #0052d9 !important;
     }
   }
 }

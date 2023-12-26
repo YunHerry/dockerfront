@@ -63,18 +63,20 @@ function onExecCmd(
       " "
     )[1];
     exec(
-      "c54cf249c1e6080b4ec5ec34d12c742d56bee46c1fe3321b768997099dca73d2",
+      "05a4755f25af6d62f609f60ca2429b0c970829da6433365a76bda3fbe0792e4e",
       `cd ${value}`,
       context.value
     ).then((res) => {
-      for (const item of res.data) {
-        // failed(item);
-        success({
-          type: "normal",
-          tag: "",
-          content: item,
-        });
-      }
+      const data = JSON.parse(res.data);
+      console.log(data);
+      // for (const item of ) {
+      //   // failed(item);
+      //   success({
+      //     type: "normal",
+      //     tag: "",
+      //     content: item,
+      //   });
+      // }
     });
 
     return;
@@ -87,20 +89,22 @@ function onExecCmd(
     // let clazz = allClass[Math.floor(Math.random() * allClass.length)];
     
     execCommand(command).then(res=>{
-      for (const item of res.data) {
-        // failed(item);
-        success({
-          type: "normal",
-          tag: "",
-          content: item,
-        });
-      }
+      console.log(res.data)
+      const data = JSON.parse(res.data);
+      // for (const item of res.data) {
+      //   // failed(item);
+      //   success({
+      //     type: "normal",
+      //     tag: "",
+      //     content: item,
+      //   });
+      // }
     })
   }
 }
-function execCommand(command:string):Promise<requestResponse<Array<string>>> {
+function execCommand(command:string):Promise<requestResponse<string>> {
   return exec(
-    "c54cf249c1e6080b4ec5ec34d12c742d56bee46c1fe3321b768997099dca73d2",
+    "05a4755f25af6d62f609f60ca2429b0c970829da6433365a76bda3fbe0792e4e",
     command,
     context.value
   );

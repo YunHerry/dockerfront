@@ -2,7 +2,9 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/login/LoginView.vue";
 import DockerManager from "../views/DockerManager.vue";
-import Order from "../views/Order.vue";
+import Order from "../views/order/Order.vue";
+import DefaultOrder from "../views/order/pages/DefaultOrder.vue";
+// import CustomOrder from "../views/order/pages/CustomOrder.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import auth from "@/utils/auth";
 import WebShell from "../views/WebShell.vue";
@@ -56,6 +58,18 @@ const routes: Array<RouteRecordRaw> = [
     path: "/order",
     name: "order",
     component: Order,
+    children: [
+      {
+        path: "",
+        name: "default",
+        component: DefaultOrder,
+      },
+      // {
+      //   path: "custom",
+      //   name: "custom",
+      //   component: CustomOrder,
+      // },
+    ]
   },
   {
     path: "/dashboard",
@@ -78,12 +92,12 @@ const filterRouter = ["home", "account", "password"];
 router.beforeEach((to, from, next) => {
   console.log(to.name);
   //如果属于不需要登陆的页面,则放行,不需要进行下列判断
-  for (const filter of filterRouter) {
-    if (filter == to.name) {
-      console.log("进入");
-      return next();
-    }
-  }
+  // for (const filter of filterRouter) {
+  //   if (filter == to.name) {
+  //     console.log("进入");
+  //     return next();
+  //   }
+  // }
   const token = auth.getToken() || null;
   // if (!token) {
   //   ElMessage({
@@ -91,7 +105,8 @@ router.beforeEach((to, from, next) => {
   //     type: 'warning',
   //   });
   //   setTimeout(()=>{
-  //      next("/login");
+  //     from
+  //     //  next(`/login/${}`);
   //   },
   //   3000)
   //   return;
