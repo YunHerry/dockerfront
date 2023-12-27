@@ -88,7 +88,7 @@ export function createPacketOrder(label: string, version: string) {
 export function changeContainerStatus(id: string, status: continerStatus) {
   return request({
     url: `/ibs/api/containers/${id}/${status}`,
-    method: "PUT",
+    method: "POST",
   });
 }
 export function exec(

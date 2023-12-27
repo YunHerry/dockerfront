@@ -25,7 +25,7 @@
                 <i class="iconfont icon-poweroff"></i>
                 开机
               </div>
-              <div @click="controlContiner(continerStatus.PAUSE)">
+              <div @click="controlContiner(continerStatus.STOP)">
                 <i class="iconfont icon-Pause"></i>
                 停机
               </div>
@@ -47,7 +47,10 @@ import { getCurrentInstance, onMounted } from "vue";
 import { ECharts, EChartsOption, init } from "echarts";
 import { changeContainerStatus } from "@/api/user";
 import { continerStatus } from "@/constant";
+import { useRoute } from "vue-router";
 let diagram: ECharts;
+const route = useRoute();
+const id = route.params.id as string;
 onMounted(() => {
   const target = getCurrentInstance();
   diagram = init(document.getElementById("cpu"));
@@ -82,7 +85,8 @@ onMounted(() => {
   }, 60000);
 });
 function controlContiner(status: continerStatus) {
-  changeContainerStatus("0", status);
+  console.log(id)
+  changeContainerStatus(id, status);
 }
 </script>
 <style lang="scss" scoped>

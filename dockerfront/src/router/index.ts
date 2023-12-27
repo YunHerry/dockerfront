@@ -72,7 +72,7 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
-    path: "/dashboard",
+    path: "/dashboard/:id",
     name: "dashboard",
     component: Dashboard,
   },

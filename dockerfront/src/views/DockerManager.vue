@@ -27,10 +27,10 @@
                 <!-- <RouterLink :to="'/webshell/1111111111111'">
                   <el-button size="small" @click="">编辑参数</el-button>
                 </RouterLink> -->
-                <RouterLink :to="'/webshell/1111111111111'">
+                <RouterLink :to="'/webshell/'+scope.row.id">
                   <el-button size="small" @click="">WebShell</el-button>
                 </RouterLink>
-                <RouterLink :to="'/dashboard'">
+                <RouterLink :to="'/dashboard/'+scope.row.id">
                   <el-button size="small" @click="">仪表盘</el-button>
                 </RouterLink>
               </template>
@@ -46,6 +46,7 @@ import { getContainers } from "@/api/user";
 import UserTop from "@/components/user/UserTop.vue";
 import { Ref, onMounted, ref } from "vue";
 import continerStatusFormatUtils from "@/utils/continerStatusFormatUtils";
+import { useRoute } from "vue-router";
 const input = ref("");
 let page = 1;
 let number = 10;

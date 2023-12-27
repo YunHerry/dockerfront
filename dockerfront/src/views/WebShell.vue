@@ -49,24 +49,12 @@ import { Ref, ref } from "vue";
 import { useRoute } from "vue-router";
 import Terminal from "vue-web-terminal";
 const route = useRoute();
-const info = route.params.id;
-
+const id = route.params.id;
+console.log(id);
 const context = ref("/bin");
-function onExecCmd(
-  key: string,
-  command: string,
-  success: Function,
-  failed: Function
-) {
-  if (/^cd\s(.+)/.test(command)) {
-    const value = (/^cd\s(.+)/.exec(command) as RegExpExecArray)[0].split(
-      " "
-    )[1];
-    exec(
-      "05a4755f25af6d62f609f60ca2429b0c970829da6433365a76bda3fbe0792e4e",
-      `cd ${value}`,
-      context.value
-    ).then((res) => {
+function getPwd() {
+  exec(`${id}`, "pwd", context.value)
+    .then((res) => {
       const data = JSON.parse(res.data);
       console.log(data);
       // for (const item of ) {
@@ -77,36 +65,62 @@ function onExecCmd(
       //     content: item,
       //   });
       // }
+    })
+    .catch((res) => {
+      console.log(1);
     });
-
+}
+function onExecCmd(
+  key: string,
+  command: string,
+  success: Function,
+  failed: Function
+) {
+  if (/^cd\s(.+)/.test(command)) {
+    const value = (/^cd\s(.+)/.exec(command) as RegExpExecArray)[0].split(
+      " "
+    )[1];
+    exec(`${id}`, `cd ${value}`, context.value)
+      .then((res) => {
+        const data = JSON.parse(res.data);
+        console.log(data);
+        // for (const item of ) {
+        //   // failed(item);
+        //   success({
+        //     type: "normal",
+        //     tag: "",
+        //     content: item,
+        //   });
+        // }
+      })
+      .catch((res) => {
+        console.log(1);
+        failed("指令执行失败");
+      });
     return;
   }
   if (key === "fail") {
     failed("Something wrong!!!");
   } else {
     // let allClass = ["success", "error", "system", "info", "warning"];
-
-    // let clazz = allClass[Math.floor(Math.random() * allClass.length)];
-    
-    execCommand(command).then(res=>{
-      console.log(res.data)
-      const data = JSON.parse(res.data);
-      // for (const item of res.data) {
-      //   // failed(item);
-      //   success({
-      //     type: "normal",
-      //     tag: "",
-      //     content: item,
-      //   });
-      // }
-    })
+    execCommand(command)
+      .then((res) => {
+        const data = res.data.split("\n");
+        for (const item of data) {
+          success({
+            type: "normal",
+            tag: "",
+            content: item,
+          });
+        }
+      })
+      .catch((res) => {
+        console.log(1);
+        failed("指令执行失败");
+      });
   }
 }
-function execCommand(command:string):Promise<requestResponse<string>> {
-  return exec(
-    "05a4755f25af6d62f609f60ca2429b0c970829da6433365a76bda3fbe0792e4e",
-    command,
-    context.value
-  );
+function execCommand(command: string): Promise<requestResponse<string>> {
+  return exec(`${id}`, command, context.value);
 }
 </script>
