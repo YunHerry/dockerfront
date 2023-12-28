@@ -57,3 +57,10 @@ export function selectContainers(
     data: selectParam || null,
   });
 }
+export function createPacket(packetConfig: packetConfig) {
+  return request.request({
+    url: "/ibs/api/packet/create",
+    method: "post",
+    data: packetConfig,
+  });
+}

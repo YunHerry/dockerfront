@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import IndexView from "@/views/IndexView.vue";
 import LoginView from "../views/login/LoginView.vue";
+import addPacket from "../views/addPacket.vue"
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -12,6 +13,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "login",
     component: LoginView,
   },
+  {
+      path: "/addPacket",
+      name: "addPacket",
+      component: addPacket,
+    },
 ];
 
 const router = createRouter({
