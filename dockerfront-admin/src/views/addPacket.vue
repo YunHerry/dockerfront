@@ -1,49 +1,49 @@
 <template>
   <div class="add-packet">
-    <h2>Add Packet</h2>
+    <h2>新增套餐</h2>
     <form @submit.prevent="addPacket">
       <div class="form-group">
-        <label for="cpuType">CPU Type:</label>
+        <label for="cpuType">cpu类型:</label>
         <input type="text" id="cpuType" v-model="packet.cpuType" required>
       </div>
       <div class="form-group">
-        <label for="cpuCoreNumber">CPU Core Number:</label>
+        <label for="cpuCoreNumber">cpu核心数:</label>
         <input type="number" id="cpuCoreNumber" v-model="packet.cpuCoreNumber" required>
       </div>
       <div class="form-group">
-        <label for="networkSpeed">Network Speed:</label>
+        <label for="networkSpeed">网速:</label>
         <input type="number" id="networkSpeed" v-model="packet.networkSpeed" required>
       </div>
       <div class="form-group">
-        <label for="disk">Disk:</label>
+        <label for="disk">硬盘空间:</label>
         <input type="number" id="disk" v-model="packet.disk" required>
       </div>
       <div class="form-group">
-        <label for="memory">Memory:</label>
+        <label for="memory">内存限制:</label>
         <input type="number" id="memory" v-model="packet.memory" required>
       </div>
       <div class="form-group">
-        <label for="cpuTypemoney">CPU Type Money:</label>
+        <label for="cpuTypemoney">cpu类型价格:</label>
         <input type="number" id="cpuTypemoney" v-model="packet.cpuTypemoney" required>
       </div>
       <div class="form-group">
-        <label for="cpuCoreNumberMoney">CPU Core Number Money:</label>
+        <label for="cpuCoreNumberMoney">cpu核心价格:</label>
         <input type="number" id="cpuCoreNumberMoney" v-model="packet.cpuCoreNumberMoney" required>
       </div>
       <div class="form-group">
-        <label for="networkSpeedMoney">Network Speed Money:</label>
+        <label for="networkSpeedMoney">1m网速价格:</label>
         <input type="number" id="networkSpeedMoney" v-model="packet.networkSpeedMoney" required>
       </div>
       <div class="form-group">
-        <label for="diskMoney">Disk Money:</label>
+        <label for="diskMoney">1G存储空间价格:</label>
         <input type="number" id="diskMoney" v-model="packet.diskMoney" required>
       </div>
       <div class="form-group">
-        <label for="memoryMoney">Memory Money:</label>
+        <label for="memoryMoney">1G内存价格:</label>
         <input type="number" id="memoryMoney" v-model="packet.memoryMoney" required>
       </div>
       <div class="form-group">
-        <label for="isFree">Is Free:</label>
+        <label for="isFree">是否弹性收费:</label>
         <input type="checkbox" id="isFree" v-model="packet.isFree">
       </div>
       <button type="submit">Add Packet</button>
