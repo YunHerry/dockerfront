@@ -59,6 +59,36 @@
           </div>
         </div>
       </div>
+      <el-input v-model="nowPorts" placeholder="端口映射" clearable />
+
+      <el-input v-model="nowContainerName" placeholder="容器名" clearable />
+
+      <el-form
+        ref="formRef"
+        :model="envs"
+        label-width="120px"
+        class="demo-dynamic"
+      >
+        <el-form-item
+          v-for="(item, index) in envs"
+          :key="index"
+          :label="'环境变量' + index"
+          :prop="'myenvs.' + index + '.value'"
+          :rules="{
+            required: true,
+            message: '环境变量不能为空',
+            trigger: 'blur',
+          }"
+        >
+          <el-input v-model="envs[index]" />
+          <el-button class="mt-2" @click.prevent="removeDomain(index)"
+            >删除当前变量</el-button
+          >
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="addDomain">新增环境变量</el-button>
+        </el-form-item>
+      </el-form>
       <!-- <div class="bandwidth base_item">
         <div class="part-title">带宽</div>
         <div class="bandwidth-content">
@@ -69,13 +99,18 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { Ref, onMounted, ref } from "vue";
+import { Ref, onMounted, ref,defineEmits } from "vue";
 import { getPacket, getImages } from "@/api/user";
+import type { FormInstance } from 'element-plus'
 const nowInstanceIndex = ref(0);
-const nowOptionIndex = ref(0);
 const nowImageName: Ref<string> = ref("");
 const packetList: Ref<Array<packet>> = ref([]);
 const imageList: Ref<Array<image>> = ref([]);
+const envs: Ref<Array<string>> = ref([]);
+const nowPorts = ref("");
+const nowContainerName = ref("");
+const formRef = ref<FormInstance>();
+const emit = defineEmits(["submit"]);
 onMounted(() => {
   getPacket({ page: 1, pageSize: 4 }).then((res) => {
     packetList.value.push(...res.data);
@@ -94,6 +129,28 @@ function tapInstance(index: number) {
 function tapImage(name: string) {
   nowImageName.value = name;
 }
+const removeDomain = (index: number) => {
+  envs.value.splice(index, 1);
+};
+const addDomain = () => {
+  envs.value.push("sdfs");
+};
+const resetForm = () => {
+  if (formRef.value) {
+    formRef.value.resetFields();
+  }
+};
+function submit() {
+  const orderConfig: orderPacket = {
+    envs: myenvs.value,
+    imageName: nowImageName.value,
+    ports: nowPorts.value.split(" "),
+    WorkingDir: "121",
+    containerName: nowContainerName.value,
+  };
+  emit("submit",orderConfig)
+}
+
 // function tapOption(index: number) {
 //   nowOptionIndex.value = index;
 // }

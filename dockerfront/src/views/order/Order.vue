@@ -22,38 +22,6 @@
               <component :is="Component" />
             </transition>
           </RouterView>
-		  
-		  <el-input v-model="nowPorts" placeholder="端口映射" clearable />
-		  
-		  <el-input v-model="nowContainerName" placeholder="容器名" clearable />
-		  
-		  <el-form
-		      ref="formRef"
-		      :model="myenvs"
-		      label-width="120px"
-		      class="demo-dynamic"
-		    >
-		      <el-form-item
-		        v-for="(item, index) in myenvs"
-		        :key="index"
-		        :label="'环境变量' + index"
-		        :prop="'myenvs.' + index + '.value'"
-		        :rules="{
-		          required: true,
-		          message: '环境变量不能为空',
-		          trigger: 'blur',
-		        }"
-		      >
-		        <el-input v-model="myenvs[index]" />
-		        <el-button class="mt-2" @click.prevent="removeDomain(myenvs[index])"
-		          >删除当前变量</el-button
-		        >
-		      </el-form-item>
-		      <el-form-item>
-		        <el-button @click="addDomain">新增环境变量</el-button>
-		      </el-form-item>
-		    </el-form>
-
         </div>
       </el-main>
       <el-footer>
@@ -78,64 +46,18 @@
 <script lang="ts" setup>
 import { Ref, onMounted, ref ,reactive} from "vue";
 import { getPacket, getImages,createOrder } from "@/api/user";
-import type { FormInstance } from 'element-plus'
 let bandwidth = ref(0);
 let worthy = ref();
 let amount = ref(1);
-const nowInstanceIndex = ref(0);
 const nowOptionIndex = ref(0);
-const nowImageName = ref("");
-const packetList: Ref<Array<packet>> = ref([]);
-const imageList: Ref<Array<image>> = ref([]);
-onMounted(() => {
-  getPacket({ page: 1, pageSize: 4 }).then((res) => {
-    packetList.value.push(...res.data);
-  });
-  getImages({
-    page: 1,
-    pageSize: 6,
-  }).then((res) => {
-    console.log(res);
-  });
-});
-function tapInstance(index: number) {
-  nowInstanceIndex.value = index;
-}
-
 function tapOption(index: number) {
   nowOptionIndex.value = index;
 }
-let myenvs: Ref<Array<string>> = ref([]); 
-let nowPorts = ref('');
-let nowContainerName = ref(''); 
-const formRef = ref<FormInstance>()
-const removeDomain = (index: number) => {
-  myenvs.value.splice(index, 1);
-};
-
-const addDomain = () => {
-  myenvs.value.push("sdfs")
-  console.log(myenvs)
-}
-
-const resetForm = () => {
-  if (formRef.value) {
-    formRef.value.resetFields();
-  }
-};
-function submit(){
-	let orderConfig: Ref<orderPacket> = ref({
-		envs: myenvs,
-		imageName: nowImageName.value,
-		ports:nowPorts.value.split(" "),
-		WorkingDir:"121",
-		containerName:nowContainerName,
-	});
-	createOrder(nowOptionIndex.value,orderConfig.value).then(res=>{
-		console.log("创建订单成功!");
+function submit(continerConfig:orderPacket) {
+  createOrder(nowOptionIndex.value, continerConfig).then((res) => {
+    console.log("创建订单成功!");
   });
 }
-
 </script>
 <style lang="scss" scoped>
 .el-footer {

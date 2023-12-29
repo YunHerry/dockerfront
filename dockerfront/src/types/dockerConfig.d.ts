@@ -1,8 +1,7 @@
 declare interface orderPacket {
-    Env: string;
-    ExposedPorts: object;
-    Image: string;
+    envs: string[];
+    ports: string[];
+    imageName: string;
     WorkingDir: string;
-    NetworkDisabled: boolean;
     containerName: string;
 }
