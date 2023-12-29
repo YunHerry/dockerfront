@@ -1,6 +1,6 @@
 export enum continerStatus {
     RESTART = "restart",
-    RUN = "run",
+    RUN = "start",
     STOP = "stop",
     PAUSE = "pause"
 }

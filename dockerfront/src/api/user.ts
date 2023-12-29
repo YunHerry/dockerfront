@@ -66,7 +66,7 @@ export function getImage(label: string, version: string) {
     method: "POST",
   });
 }
-export function createOrder(packetId: string, config: orderPacket) {
+export function createOrder(packetId: number, config: orderPacket) {
   return request({
     url: `/ibs/api/order/create/${packetId}`,
     method: "POST",
