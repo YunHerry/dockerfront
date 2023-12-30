@@ -142,15 +142,23 @@ const resetForm = () => {
 };
 function submit() {
   const orderConfig: orderPacket = {
-    envs: myenvs.value,
+    envs: envs.value,
     imageName: nowImageName.value,
     ports: nowPorts.value.split(" "),
     WorkingDir: "121",
     containerName: nowContainerName.value,
   };
-  emit("submit",orderConfig)
+  return {
+    packetId: packetList.value[nowInstanceIndex.value].id,
+    orderConfig: orderConfig
+  };
 }
-
+export interface orderPage {
+  submit: Function
+}
+defineExpose({
+  submit,
+});
 // function tapOption(index: number) {
 //   nowOptionIndex.value = index;
 // }

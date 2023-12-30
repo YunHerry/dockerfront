@@ -51,7 +51,6 @@ export function getPacket(
   });
 }
 export function getImages(pageParam?: pageParam):Promise<requestResponse<Array<image>>> {
-  console.log(pageParam);
   return request({
     url: "/ibs/api/images",
     method: "POST",
@@ -67,12 +66,10 @@ export function getImage(label: string, version: string) {
   });
 }
 export function createOrder(packetId: number, config: orderPacket) {
+  console.log(config)
   return request({
-    url: `/ibs/api/order/create`,
+    url: `/ibs/api/order/create?id=${packetId}`,
     method: "POST",
-    params: {
-      id: packetId
-    },
     data: config,
   });
 }

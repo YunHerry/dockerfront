@@ -19,7 +19,7 @@
           </div>
           <RouterView v-slot="{ Component }">
             <transition>
-              <component :is="Component" />
+              <component ref="orderTab" :is="Component" />
             </transition>
           </RouterView>
         </div>
@@ -46,15 +46,19 @@
 <script lang="ts" setup>
 import { Ref, onMounted, ref ,reactive} from "vue";
 import { getPacket, getImages,createOrder } from "@/api/user";
+import { orderPage } from "./pages/DefaultOrder.vue";
 let bandwidth = ref(0);
 let worthy = ref();
 let amount = ref(1);
+const orderTab:Ref<orderPage | null> = ref(null);
 const nowOptionIndex = ref(0);
 function tapOption(index: number) {
   nowOptionIndex.value = index;
 }
-function submit(continerConfig:orderPacket) {
-  createOrder(nowOptionIndex.value, continerConfig).then((res) => {
+function submit(e:PointerEvent) {
+  const {packetId,orderConfig} = orderTab?.value?.submit();
+  console.log(packetId,orderConfig)
+  createOrder(packetId, orderConfig).then((res) => {
     console.log("创建订单成功!");
   });
 }

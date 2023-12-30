@@ -35,7 +35,7 @@ enum requestResult {
 service.interceptors.response.use(
   response => {
     const res = response.data;
-    console.log(res);
+    // console.log(res);
     const code = parseInt((parseInt(res.code) / 100).toFixed());
     if(code != requestResult.SUCCESS) {
       ElMessage(
