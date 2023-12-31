@@ -55,7 +55,7 @@ const nowOptionIndex = ref(0);
 function tapOption(index: number) {
   nowOptionIndex.value = index;
 }
-function submit(e:PointerEvent) {
+function submit(e:MouseEvent) {
   const {packetId,orderConfig} = orderTab?.value?.submit();
   console.log(packetId,orderConfig)
   createOrder(packetId, orderConfig).then((res) => {

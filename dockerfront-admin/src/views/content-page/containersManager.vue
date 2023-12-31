@@ -3,33 +3,37 @@
     <i class="title">容器管理</i>
     <div class="dockers-table">
       <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="name" label="名称/ID" width="180" />
-      <el-table-column prop="state" label="状态" width="180" />
-      <el-table-column prop="packetId" label="套餐" width="180" />
-      <el-table-column width="180">
-        <template #header>
-          <el-input
-            v-model="input"
-            size="small"
-            placeholder="关键字检索"
-            @change="search"
-            clearable
-          />
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="180">
-        <template #default="scope">
-          <el-button size="small" @click="">Edit</el-button>
-          <el-button size="small" type="danger" @click="">Delete</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        <el-table-column prop="name" label="名称/ID" width="180" />
+        <el-table-column prop="state" label="状态" width="180" />
+        <el-table-column prop="packetId" label="套餐" width="180" />
+        <el-table-column width="180">
+          <template #header>
+            <el-input
+              v-model="input"
+              size="small"
+              placeholder="关键字检索"
+              @change="search"
+              clearable
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <RouterLink :to="'/webshell/' + scope.row.id">
+              <el-button size="small" @click="">WebShell</el-button>
+            </RouterLink>
+            <RouterLink :to="'/dashboard/' + scope.row.id">
+              <el-button size="small" @click="">仪表盘</el-button>
+            </RouterLink>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { selectContainers } from "@/api/admin";
-import Logo from "@/components/logo.vue";
+import Logo from "@/components/Logo.vue";
 import { onMounted, ref } from "vue";
 import { ElTable, ElTableColumn, ElInput, ElButton } from "element-plus";
 const input = ref("");
@@ -73,9 +77,9 @@ let tableData: continer[] = [
 ];
 
 onMounted(() => {
-  selectContainers(1,10).then(res=>{
-    console.log(res.data)
-      // tableData = res.data;
+  selectContainers(1, 10).then((res) => {
+    console.log(res.data);
+    // tableData = res.data;
   });
 });
 </script>
