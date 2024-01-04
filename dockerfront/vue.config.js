@@ -4,6 +4,14 @@ const Components = require('unplugin-vue-components/webpack')
 const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 const path = require('path');
 module.exports = defineConfig({
+  devServer: {
+    client: {
+      overlay: {
+        warnings: false,
+        errors: true,
+      }
+    }
+  },
   transpileDependencies: true,
   lintOnSave: false,
   css: {

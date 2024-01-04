@@ -1,29 +1,55 @@
 <template>
   <div class="body">
-    <i class="text from-margin">输入密码</i>
-    <i id="passwordPoint" style="display: none; color: #e81123"
-      >密码应至少含有一个大写字母和一个小写字母,若干个数字,不应含有中文，总和为8-16位。</i
-    >
-    <i id="passwordHint" style="display: none; color: #e81123"
-      >两次密码不一致</i
-    >
-    <input
-      id="registeredPassword"
-      class="input-login-account from-margin"
-      placeholder="输入密码"
-    />
-    <input
-      id="registeredConfirmPassword"
-      class="input-login-account from-margin"
-      placeholder="确认密码"
-    />
-    <i
-      >已有帐户？<a href="javascript:void(0);" onclick="cutoverLogin()"
-        >前往登录!</a
-      ></i
-    >
-    <button class="next-button" onclick="cutoverregisteredMail()">
-      下一步
-    </button>
+    <div class="title">
+      <Logo></Logo>
+      <i>输入密码</i>
+    </div>
+    <div class="center">
+      <i class="warning" v-show="nowWarn == 1">两次密码不一致</i>
+      <input class="input" placeholder="输入密码" v-model="password" />
+      <input class="input" placeholder="确认密码" v-model="password1" />
+      <i>已有帐户？<RouterLink to="/login">前往登录!</RouterLink></i>
+    </div>
+    <button class="next-button" @click="goRegister">注册</button>
   </div>
 </template>
+<script lang="ts" setup>
+import { isEmpty } from "@/utils/stringUtils";
+import request from "@/utils/request";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
+import { register } from "@/api/user";
+const emit = defineEmits(["commitRegisterInfo"]);
+const nowWarn = ref(0);
+const password = ref("");
+const password1 = ref("");
+const router = useRouter();
+function goRegister() {
+  if (password.value != password1.value) {
+    nowWarn.value = 1;
+  } else {
+    nowWarn.value = 0;
+    emit(
+      "commitRegisterInfo",
+      function (registerInfo: userInfo, password: string) {
+        if (isEmpty(registerInfo.username)) {
+          ElMessage.warning("账号信息有误,请重试");
+          router.push("/login/registerAccount");
+          return;
+        }
+        registerInfo.password = password;
+        console.log(registerInfo);
+        register(registerInfo).then((res) => {
+          if (res.code == 200) {
+            ElMessage.success("注册成功");
+          } else {
+            router.push("/login");
+          }
+        });
+      },
+      password.value
+    );
+  }
+}
+</script>

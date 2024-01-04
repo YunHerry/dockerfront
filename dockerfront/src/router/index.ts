@@ -6,10 +6,10 @@ import Order from "../views/order/Order.vue";
 import DefaultOrder from "../views/order/pages/DefaultOrder.vue";
 // import CustomOrder from "../views/order/pages/CustomOrder.vue";
 import Dashboard from "@/views/Dashboard.vue";
-import auth from "@/utils/auth";
 import WebShell from "../views/WebShell.vue";
 import { ElMessage } from "element-plus";
 import { h } from "vue";
+import { getToken } from "@/utils/auth";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -98,7 +98,7 @@ router.beforeEach((to, from, next) => {
   //     return next();
   //   }
   // }
-  const token = auth.getToken() || null;
+  const token = getToken() || null;
   // if (!token) {
   //   ElMessage({
   //     message: "登录用户信息失效,请重新登录",

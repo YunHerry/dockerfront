@@ -1,8 +1,7 @@
 import request from "@/utils/request";
-import auth from "@/utils/auth";
 import { AxiosResponse } from "axios";
 import { continerStatus } from "@/constant";
-export function login(data: userinfo): Promise<requestResponse<string>> {
+export function login(data: userInfo): Promise<requestResponse<string>> {
   return request({
     url: "/ibs/api/verify/login",
     method: "POST",
@@ -12,10 +11,14 @@ export function login(data: userinfo): Promise<requestResponse<string>> {
     },
   });
 }
-export function register(data: userinfo) {
+export function register(data: userInfo) {
   return request({
     url: "/ibs/api/verify/register",
     method: "POST",
+    data: {
+      account: data.username,
+      pwd: data.password,
+    },
   });
 }
 export function logout() {

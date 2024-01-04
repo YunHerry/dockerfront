@@ -1,9 +1,9 @@
 import store from "@/store";
 import axios from "axios";
-import auth from "./auth";
 import router from "@/router/index"
 import { isEmpty } from "./stringUtils";
 import { ElMessage } from "element-plus";
+import { getToken } from "@/utils/auth";
 const service = axios.create({
   baseURL: "http://localhost:8888",
   withCredentials: false,
@@ -13,7 +13,7 @@ service.interceptors.request.use(
   config => {
     //假设store拥有token
     if (isEmpty(store.getters["user/token"])) {
-      config.headers["Authorization"] = auth.getToken(); 
+      config.headers["Authorization"] = getToken(); 
     }
     return config;
   },
@@ -35,12 +35,11 @@ enum requestResult {
 service.interceptors.response.use(
   response => {
     const res = response.data;
-    // console.log(res);
     const code = parseInt((parseInt(res.code) / 100).toFixed());
     if(code != requestResult.SUCCESS) {
       ElMessage(
         {
-          message: "发生了一些错误,请稍后再试",
+          message: res.message,
           type: "warning"
         }
       )

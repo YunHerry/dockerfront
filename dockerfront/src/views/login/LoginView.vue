@@ -1,32 +1,33 @@
 <template>
   <div class="middle">
     <div class="content">
-      <RouterView  @commitUsername="setUserName" @commitPassword="setPassword" @commitLogin="login"/>
+      <RouterView
+        @commitLoginInfo="commitLoginInfo"
+        @commitRegisterInfo="commitRegisterInfo"
+      />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import store from '@/store';
-import { useRouter,useRoute } from "vue-router";
-let username:string = "";
-let password:string = "";
-const router = useRouter();
+import store from "@/store";
+import { ref } from "vue";
+import { useRoute } from "vue-router";
 const route = useRoute();
+const loginData = ref({
+  username: "",
+  password: "",
+});
+const registerData = ref({
+  username: "",
+  password: "",
+});
 const dir = route.params.red;
-console.log(dir);
-function setUserName(value:string) {
-    username = value;
+//访问数据
+function commitLoginInfo(callback: Function, data: string) {
+  callback.call(loginData.value,loginData.value,data);
 }
-function setPassword(value:string) {
-    password = value;
-}
-function login() {
-  store.dispatch("user/login",{username: username,password: password}).then(()=>{
-    console.log("触发");
-    router.push("/dockerManager");
-  }).catch(err=>{
-    console.log(err);
-  })
+function commitRegisterInfo(callback: Function, data: string) {
+  callback.call(registerData.value,registerData.value,data);
 }
 </script>
 <style lang="scss">
@@ -68,44 +69,48 @@ function login() {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    align-items: baseline
+    align-items: baseline;
   }
   .input {
-  width: 326px;
-  font-size: 15px;
-  height: 36px;
-  outline: none;
-  padding: 1px 10px;
-  border-width: 1px;
-  border: 0;
-  border-bottom: 1px solid gray;
-  padding-left: 0;
-  display: block;
-  align-self: center;
-}
-.center {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  align-self: center;
-}
-a {
-  text-decoration: transparent;
-  color: #00a7da;
-  font-weight: 400;
-  cursor: pointer;
-}
-.title {
-  height: 60px;
-  font-size: 1.5rem;
-  font-weight: 600;
-  display: flex;
-  flex-grow: unset;
-  align-items: center;
-  flex-direction: row;
-  i {
-    margin-left: 10px;
+    width: 326px;
+    font-size: 15px;
+    height: 36px;
+    outline: none;
+    padding: 1px 10px;
+    border-width: 1px;
+    border: 0;
+    border-bottom: 1px solid gray;
+    padding-left: 0;
+    display: block;
+    align-self: center;
   }
-}
+  .center {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    align-self: center;
+    .warning {
+      font-style: normal;
+      color: #e81123;
+    }
+  }
+  a {
+    text-decoration: transparent;
+    color: #00a7da;
+    font-weight: 400;
+    cursor: pointer;
+  }
+  .title {
+    height: 60px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    flex-grow: unset;
+    align-items: center;
+    flex-direction: row;
+    i {
+      margin-left: 10px;
+    }
+  }
 }
 </style>
