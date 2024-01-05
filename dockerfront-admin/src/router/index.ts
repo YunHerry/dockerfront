@@ -12,6 +12,34 @@ const routes: Array<RouteRecordRaw> = [
     path: "/login",
     name: "login",
     component: LoginView,
+    children: [
+      {
+        path: "",
+        name: "account",
+        component: () => import("../views/login/pages/AccountView.vue"),
+      },
+      {
+        path: "password",
+        name: "password",
+        component: () => import("../views/login/pages/PasswordView.vue"),
+      },
+      {
+        path: "variety",
+        name: "variety",
+        component: () => import("../views/login/pages/VarietyView.vue"),
+      },
+      {
+        path: "registerAccount",
+        name: "registerAccount",
+        component: () => import("../views/login/pages/RegisterAccountView.vue"),
+      },
+      {
+        path: "registerPassword",
+        name: "registerPassword",
+        component: () =>
+          import("../views/login/pages/RegisterPasswordView.vue"),
+      },
+    ],
   },
   {
       path: "/addPacket",

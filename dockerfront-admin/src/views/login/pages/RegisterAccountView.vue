@@ -4,41 +4,38 @@
       <Logo></Logo>
       <i>注册账户</i>
     </div>
-    <i id="nullReminder" style="display: none; color: #e81123"
-      >用户名不能为空!</i
-    >
-    <i id="occupationReminder" style="display: none; color: #e81123"
-      >该用户名已被占用,请重试~</i
-    >
-    <i id="specificationReminder" style="display: none; color: #e81123"
-      >用户名不能包含中文,且长度应在五到十二之间!</i
-    >
+
     <div class="center">
-      <input class="input" v-model="username" placeholder="用户名称" />
-      <i>已有帐户？<a @click="cutoverLogin()">前往登录!</a></i>
+      <i class="warning" v-show="nowWarn == 1">用户名不能为空!</i>
+      <!-- <i class="warning" v-show="nowWarn == 3">该用户名已被占用,请重试~</i>
+      <i class="warning" v-show="nowWarn == 2"
+        >用户名不包含中文和空格,且长度在6到16!</i
+      > -->
+      <input v-model="username" class="input" placeholder="用户名称" />
+      <i>已有帐户？<RouterLink to="/login">前往登录!</RouterLink></i>
     </div>
-    <button class="next-button" @click="next">
-      下一步
-    </button>
+    <button class="next-button" @click="goRegisteredPassword">下一步</button>
   </div>
 </template>
 <script lang="ts" setup>
+import { isEmpty } from "@/utils/stringUtils";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import Logo from "@/components/Logo.vue";
-
+const emit = defineEmits(["commitRegisterInfo"]);
+const nowWarn = ref(0);
 const username = ref("");
-const emit = defineEmits(["update-register", "router-next"]);
 const router = useRouter();
-function next() {
-  emit("update-register", (item: userinfo) => {
-    item.username = username.value || '';
-  });
-  emit("router-next","inputRegisterPassword");
-}
-function cutoverLogin() {
-  emit("router-next", "inputLoginAccount");
+function goRegisteredPassword() {
+  if (isEmpty(username.value)) {
+    nowWarn.value = 1;
+  }
+  emit(
+    "commitRegisterInfo",
+    function (registerInfo: userInfo, username: string) {
+      registerInfo.username = username;
+    },
+    username.value
+  );
+  router.push("/login/registerPassword");
 }
 </script>
-<style lang="scss" scoped></style>
-

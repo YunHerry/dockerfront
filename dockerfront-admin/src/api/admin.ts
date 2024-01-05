@@ -1,7 +1,7 @@
 import { continerStatus } from "@/constant";
 import request from "@/utils/request";
 import axios, { AxiosResponse } from "axios";
-export function login(data: userinfo): Promise<requestResponse<string>> {
+export function login(data: userInfo): Promise<requestResponse<string>> {
   return request({
     url: "/ibs/api/verify/login",
     method: "post",
@@ -11,7 +11,7 @@ export function login(data: userinfo): Promise<requestResponse<string>> {
     },
   });
 }
-export function register(data: userinfo): Promise<requestResponse<userinfo>>  {
+export function register(data: userInfo): Promise<requestResponse<userInfo>>  {
   return request({
     url: "/ibs/api/verify/register",
     method: "post",

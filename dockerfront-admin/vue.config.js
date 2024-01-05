@@ -6,6 +6,14 @@ const path = require('path');
 module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,
+  devServer: {
+    client: {
+      overlay: {
+        warnings: false,
+        errors: true,
+      }
+    }
+  },
   css: {
     loaderOptions: {
       scss: {

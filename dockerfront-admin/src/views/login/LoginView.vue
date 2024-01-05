@@ -1,82 +1,32 @@
 <template>
   <div class="middle">
     <div class="content">
-      <transition name="toggle">
-        <KeepAlive>
-          <component
-            :is="nowPage?.content"
-            @update-login="changeUserValue"
-            @update-register="changeRegValue"
-            @router-next="next"
-            class="component"
-          ></component>
-        </KeepAlive>
-      </transition>
+      <RouterView
+        @commitLoginInfo="commitLoginInfo"
+        @commitRegisterInfo="commitRegisterInfo"
+      />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { defineAsyncComponent, ref, markRaw, provide } from "vue";
-import { useRouter } from "vue-router";
-const find = (function () {
-  let ComponntList = [
-    markRaw({
-      name: "inputLoginAccount",
-      content: defineAsyncComponent(() => {
-        return import("@/views/login/pages/AccountView.vue");
-      }),
-    }),
-    markRaw({
-      name: "inputLoginPassword",
-      content: defineAsyncComponent(() => {
-        return import("@/views/login/pages/PasswordView.vue");
-      }),
-    }),
-    markRaw({
-      name: "inputRegisterAccount",
-      content: defineAsyncComponent(() => {
-        return import("@/views/login/pages/RegisterAccountView.vue");
-      }),
-    }),
-    markRaw({
-      name: "inputRegisterPassword",
-      content: defineAsyncComponent(() => {
-        return import("@/views/login/pages/RegisterPasswordView.vue");
-      }),
-    }),
-    markRaw({
-      name: "variety",
-      content: defineAsyncComponent(() => {
-        return import("@/views/login/pages/VarietyView.vue");
-      }),
-    }),
-  ];
-  return (ComponentName: string) => {
-    return ComponntList.find((item) => {
-      return item.name == ComponentName;
-    });
-  };
-})();
-let userObject: userinfo = {
+import { ref } from "vue";
+import { useRoute } from "vue-router";
+const route = useRoute();
+const loginData = ref({
   username: "",
   password: "",
-};
-let regObject: userinfo = {
+});
+const registerData = ref({
   username: "",
   password: "",
-};
-provide("userLoginObject", userObject);
-let nowPage = ref(find("inputLoginAccount"));
-const router = useRouter();
-function changeUserValue(fn: Function) {
-  fn.call(null, userObject);
+});
+const dir = route.params.red;
+//访问数据
+function commitLoginInfo(callback: Function, data: string) {
+  callback.call(loginData.value,loginData.value,data);
 }
-function changeRegValue(fn: Function) {
-  fn.call(null, regObject);
-}
-function next(nextViewName: string) {
-  nowPage.value = find(nextViewName);
-  console.log(nowPage);
+function commitRegisterInfo(callback: Function, data: string) {
+  callback.call(registerData.value,registerData.value,data);
 }
 </script>
 <style lang="scss">
@@ -84,9 +34,6 @@ function next(nextViewName: string) {
   position: relative;
   width: 100%;
   height: 100%;
-}
-.component {
-  transition: all 0.2s;
 }
 .next-button {
   background-color: #005da6;
@@ -113,14 +60,15 @@ function next(nextViewName: string) {
   left: 50%;
   transform: translate(-50%, -50%);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.content {
   display: flex;
-  .body {
+  .body:first-child {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: baseline;
-    min-width: 440px;
   }
   .input {
     width: 326px;
@@ -140,6 +88,10 @@ function next(nextViewName: string) {
     align-items: flex-start;
     flex-direction: column;
     align-self: center;
+    .warning {
+      font-style: normal;
+      color: #e81123;
+    }
   }
   a {
     text-decoration: transparent;
@@ -159,18 +111,5 @@ function next(nextViewName: string) {
       margin-left: 10px;
     }
   }
-}
-.toggle-enter-to {
-   // 出现的时候向左滑一下的效果
-}
-//进入
-.toggle-enter-from {
-  opacity: 0;
-  transform: translateX(-110%);
-}
-.toggle-leave-to {
-  opacity: 0;
-  transform: translateX(110%);
-
 }
 </style>

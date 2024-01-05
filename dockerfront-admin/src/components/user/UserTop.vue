@@ -1,34 +1,42 @@
 <template>
-  <div class="user-top">
-    <template v-if="userLoginStatus">
-      <div class="user-info">
-        <div></div>
-        <ul class="user-about">
-          <li>
-            <el-avatar
-              :size="40"
-              src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-            />
-          </li>
-          <li>
-            <div class="show-window">个人信息</div>
-          </li>
-        </ul>
+  <template v-if="userLoginStatus">
+    <div class="user-info">
+      <div class="left-top">
+        <template v-if="props.showLogo">
+          <Logo></Logo>
+        </template>
+        <template v-if="props.showLogo && props.showNav">
+          <div class="border"></div>
+        </template>
+        <template v-if="props.showNav">
+          <i class="tab-btn link">常见问题</i>
+          <i class="tab-btn link">帮助中心</i>
+          <i class="tab-btn link">关于我们</i>
+        </template>
       </div>
-    </template>
-    <template v-else>
-      <div class="right-top">
-        <i class="tab-btn btn-register">注册</i>
-        <div class="tab-btn btn-login">登录</div>
-      </div>
-    </template>
-  </div>
+      <ul class="user-about">
+        <li>
+          <el-avatar
+            :size="40"
+            src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+          />
+        </li>
+        <li>
+          <div class="show-window">个人信息</div>
+        </li>
+      </ul>
+    </div>
+  </template>
+  <template v-else>
+    <div class="right-top">
+      <RouterLink to="/login/registerAccount" class="tab-btn btn-register"
+        >注册</RouterLink
+      >
+      <RouterLink to="/login" class="tab-btn btn-login">登录</RouterLink>
+    </div>
+  </template>
 </template>
 <style scoped lang="scss">
-.user-top {
-  height: 60px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
 .user-about {
   list-style: none;
   height: 100%;
@@ -82,10 +90,11 @@
   padding: 0 !important;
   @extend %flex-vertical-center;
   flex: 1;
-  justify-content: space-between;
   border-bottom: 1px solid rgba(61, 61, 61, 0.1);
   .tab-btn {
     @extend %small-text;
+    text-decoration: none;
+    color: $black;
   }
   .link {
     margin: 0 10px;
@@ -94,6 +103,7 @@
     height: 100%;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     div {
       display: inline-block;
     }
@@ -124,12 +134,17 @@
 import Logo from "@/components/Logo.vue";
 import store from "@/store";
 import { isEmpty } from "@/utils/stringUtils";
-import {ElAvatar} from "element-plus";
-let userLoginStatus = isEmpty(store.getters["user/token"]);
+import { onMounted, ref } from "vue";
+let userLoginStatus = ref(false);
 interface props {
   showLogo: boolean;
+  showNav: boolean;
 }
 let props = withDefaults(defineProps<props>(), {
   showLogo: true,
+  showNav: false,
 });
+onMounted(()=>{
+  userLoginStatus.value = !isEmpty(store.getters["user/token"]);
+})
 </script>

@@ -4,51 +4,48 @@
       <Logo></Logo>
       输入密码
     </div>
-
     <div class="center">
-      <input class="input" placeholder="密码" onclick="" v-model="password" />
-      <!-- <i class="text-small from-margin"
-        ><a onclick="cutoverRegistered()">忘记了密码？</a></i
-      >
-      <i class="text-small from-margin"
-        ><a onclick="cutoverLoginConfirm(this)">使用邮箱验证码登录</a></i
-      > -->
+      <input class="input" placeholder="密码" v-model="password" />
     </div>
-    <button class="next-button" @click="next()">
-      登录
-    </button>
+    <button class="next-button" @click="next()">登录</button>
   </div>
 </template>
 <script lang="ts" setup>
 import Logo from "@/components/Logo.vue";
-import store from "@/store";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-const emit = defineEmits(["update-login", "router-next"]);
+import { isEmpty } from "@/utils/stringUtils";
+import { ElMessage } from "element-plus";
+import store from "@/store";
 
+const emit = defineEmits(["commitLoginInfo", "commitLogin"]);
 const password = ref();
 const router = useRouter();
 function next() {
-  emit("update-login", (item: userinfo) => {
-    item.password = password.value;
-    login(item)
-    console.log(item);
-  });
-  // emit("router-next", "inputLoginPassword");
-}
-function login(userObject:userinfo) {
-  store
-    .dispatch("user/login", {
-      username: userObject.username,
-      password: userObject.password,
-    })
-    .then((res) => {
-      console.log(res);
-      router.push("/");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  emit(
+    "commitLoginInfo",
+    function (loginInfo: userInfo, password: string) {
+      if (isEmpty(loginInfo.username)) {
+        ElMessage.warning("账号信息有误,请重试");
+        router.push("/login");
+        return;
+      }
+      loginInfo.password = password;
+      store
+        .dispatch("user/login", {
+          username: loginInfo.username,
+          password: loginInfo.password,
+        })
+        .then((res) => {
+          ElMessage.success("登陆成功");
+          router.push("/");
+        })
+        .catch((err) => {
+          // ElMessage.warning("账号或密码错误");
+        });
+    },
+    password.value
+  );
 }
 </script>
-<style lang="scss" scoped></style>
+<style></style>

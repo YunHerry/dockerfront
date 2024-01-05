@@ -1,5 +1,6 @@
 import { login,getInfo } from "@/api/admin";
-import auth from "@/utils/auth";
+import { getToken, setToken } from "@/utils/auth";
+import { isEmpty } from "@/utils/stringUtils";
 import { ElMessage } from "element-plus";
 import { Commit } from "vuex";
 const getDefaultState = () => {
@@ -27,7 +28,7 @@ const mutations = {
   },
 };
 const actions = {
-  login({ commit }: { commit: Commit }, userinfo: userinfo) {
+  login({ commit }: { commit: Commit }, userinfo: userInfo) {
     return new Promise<void>((resolve, rject) => {
         login(userinfo)
         .then((res) => {
@@ -41,7 +42,7 @@ const actions = {
             return;
           }
           commit("SET_TOKEN", data);
-          auth.setToken(data);
+          setToken(data);
           resolve();
         })
         .catch((err) => {
@@ -71,6 +72,18 @@ const actions = {
         .catch((err) => {
           reject(err);
         });
+    });
+  },
+  loadToken({ commit }: {commit:Commit}) {
+    const token = getToken() || "";
+    return new Promise((resolve, rject) => {
+      if (!isEmpty(token)) {
+        commit("SET_TOKEN", token);
+        setToken(token);
+        resolve(token);
+      } else {
+        rject("token is null");
+      }
     });
   },
 };

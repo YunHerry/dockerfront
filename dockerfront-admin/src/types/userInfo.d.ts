@@ -1,4 +1,4 @@
-declare interface userinfo {
+declare interface userInfo {
      username:string;
      password:string;
 }
