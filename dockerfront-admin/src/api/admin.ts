@@ -35,7 +35,7 @@ export function getInfo() {
 }
 export function changeContainerStatus(id: string, status: continerStatus) {
   return request.request({
-    url: `/ibs/api/admin/containers/${id}/${status}`,
+    url: `/ibs/api/admin/container/${id}/${status}`,
     method: "get",
   });
 }
