@@ -45,31 +45,15 @@
 </style>
 <script lang="ts" setup>
 import { exec } from "@/api/user";
+import { ca } from "element-plus/es/locale";
 import { Ref, ref } from "vue";
 import { useRoute } from "vue-router";
 import Terminal from "vue-web-terminal";
 const route = useRoute();
 const id = route.params.id;
 console.log(id);
-const context = ref("/bin");
-function getPwd() {
-  exec(`${id}`, "pwd", context.value)
-    .then((res) => {
-      const data = JSON.parse(res.data);
-      console.log(data);
-      // for (const item of ) {
-      //   // failed(item);
-      //   success({
-      //     type: "normal",
-      //     tag: "",
-      //     content: item,
-      //   });
-      // }
-    })
-    .catch((res) => {
-      console.log(1);
-    });
-}
+const context = ref("/");
+
 function onExecCmd(
   key: string,
   command: string,
@@ -82,19 +66,15 @@ function onExecCmd(
     )[1];
     exec(`${id}`, `cd ${value}`, context.value)
       .then((res) => {
-        const data = JSON.parse(res.data);
-        console.log(data);
-        // for (const item of ) {
-        //   // failed(item);
-        //   success({
-        //     type: "normal",
-        //     tag: "",
-        //     content: item,
-        //   });
-        // }
+        context.value = calculateNewPath(context.value, value);
+        success({
+          type: "normal",
+          tag: "",
+          content: "",
+        });
       })
       .catch((res) => {
-        console.log(1);
+        console.log(res);
         failed("指令执行失败");
       });
     return;
@@ -122,5 +102,24 @@ function onExecCmd(
 }
 function execCommand(command: string): Promise<requestResponse<string>> {
   return exec(`${id}`, command, context.value);
+}
+function calculateNewPath(currentPath:string, cdCommand:string) {
+  const isAbsolute = cdCommand.startsWith("/");
+
+  const commands = cdCommand.split(/\//);
+
+  for (const command of commands) {
+    if (command === "..") {
+      currentPath = currentPath.replace(/\/[^/]+$/, "");
+    } else if (command === ".") {
+    } else {
+      currentPath = currentPath + "/" + command;
+    }
+  }
+
+  currentPath = currentPath.replace(/\/+$/, "").replace(/\/\//g,"").replace(/\/\//g,"")
+
+
+  return isAbsolute ? currentPath : "/" + currentPath;
 }
 </script>

@@ -9,7 +9,11 @@
           <i class="title">容器管理</i>
           <el-table :data="tableData" style="width: 100%">
             <el-table-column prop="name" label="名称/ID" width="180" />
-            <el-table-column prop="state" label="状态" width="180" />
+            <el-table-column prop="state" label="状态" width="180">
+              <template #default="scope">
+                {{ getValue(scope.row.state)?.value }}
+              </template>
+            </el-table-column>
             <el-table-column prop="packetId" label="套餐" width="180" />
             <el-table-column width="180">
               <template #header>
@@ -27,11 +31,15 @@
                 <!-- <RouterLink :to="'/webshell/1111111111111'">
                   <el-button size="small" @click="">编辑参数</el-button>
                 </RouterLink> -->
-                <RouterLink :to="'/webshell/'+scope.row.id">
-                  <el-button size="small" @click="">WebShell</el-button>
-                </RouterLink>
-                <RouterLink :to="'/dashboard/'+scope.row.id">
+                <RouterLink :to="'/dashboard/' + scope.row.id">
                   <el-button size="small" @click="">仪表盘</el-button>
+                </RouterLink>
+                <RouterLink :to="'/webshell/' + scope.row.id" v-show="scope.row.state == 1">
+                  <el-button
+                    size="small"
+                    @click=""
+                    >WebShell</el-button
+                  >
                 </RouterLink>
               </template>
             </el-table-column>
@@ -45,7 +53,7 @@
 import { getContainers } from "@/api/user";
 import UserTop from "@/components/user/UserTop.vue";
 import { Ref, onMounted, ref } from "vue";
-import continerStatusFormatUtils from "@/utils/continerStatusFormatUtils";
+import { getValue, getValues } from "@/utils/continerStatusFormatUtils";
 import { useRoute } from "vue-router";
 const input = ref("");
 let page = 1;
@@ -61,12 +69,12 @@ function search(value: string) {
     return item.name == value;
   });
 }
-let tableData: Ref<Array<continer>> = ref([]); 
+let tableData: Ref<Array<continer>> = ref([]);
 onMounted(() => {
-  getContainers(page,number).then(res=>{
+  getContainers(page, number).then((res) => {
     tableData.value.push(...res.data);
   });
-  continerStatusFormatUtils.getValues(tableData.value);
+  // continerStatusFormatUtils.getValues(tableData.value);
 });
 </script>
 
@@ -104,5 +112,8 @@ onMounted(() => {
 }
 .el-scrollbar {
   text-align: left;
+}
+.cell a:not(a:first-child) {
+  margin: 0 10px;
 }
 </style>
