@@ -8,10 +8,7 @@ module.exports = defineConfig({
   lintOnSave: false,
   devServer: {
     client: {
-      overlay: {
-        warnings: false,
-        errors: true,
-      }
+      overlay: false,
     }
   },
   css: {

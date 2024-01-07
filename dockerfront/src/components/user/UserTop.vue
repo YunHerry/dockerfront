@@ -144,14 +144,7 @@ let props = withDefaults(defineProps<props>(), {
   showLogo: true,
   showNav: false,
 });
-onMounted(() => {
-  store
-    .dispatch("user/loadToken")
-    .then((res) => {
-      userLoginStatus.value = true;
-    })
-    .catch((res) => {
-      userLoginStatus.value = false;
-    });
-});
+onMounted(()=>{
+  userLoginStatus.value = !isEmpty(store.getters["user/token"]);
+})
 </script>

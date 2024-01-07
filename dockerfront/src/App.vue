@@ -22,9 +22,17 @@ html,body,#app {
 }
 </style>
 <script lang="ts" setup>
+import store from '@/store';
+import { onMounted } from 'vue';
+
 // import { useRecaptchaProvider } from 'vue-recaptcha'
 
 // useRecaptchaProvider();
+onMounted(() => {
+  store.dispatch("user/loadToken").then(res=>{
+    console.log(store.getters["user/users"])
+  });
+});
 const debounce = (fn: Function, delay: number) => {
   let timer: number | null = null;
   return function (this:ResizeObserver) {

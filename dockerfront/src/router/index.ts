@@ -10,6 +10,8 @@ import WebShell from "../views/WebShell.vue";
 import { ElMessage } from "element-plus";
 import { h } from "vue";
 import { getToken } from "@/utils/auth";
+import store from "@/store";
+import { isEmpty } from "@/utils/stringUtils";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -87,30 +89,24 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
-//@TODO login后续考虑修改为没有子路由
-const filterRouter = ["home", "account", "password"];
+const filterRouter = ["home", "account","password","registerAccount","registerPassword"];
 router.beforeEach((to, from, next) => {
-  console.log(to.name);
-  //如果属于不需要登陆的页面,则放行,不需要进行下列判断
-  // for (const filter of filterRouter) {
-  //   if (filter == to.name) {
-  //     console.log("进入");
-  //     return next();
-  //   }
-  // }
-  const token = getToken() || null;
-  // if (!token) {
-  //   ElMessage({
-  //     message: "登录用户信息失效,请重新登录",
-  //     type: 'warning',
-  //   });
-  //   setTimeout(()=>{
-  //     from
-  //     //  next(`/login/${}`);
-  //   },
-  //   3000)
-  //   return;
-  // }
-  next();
+  console.log(to);
+  for (const filter of filterRouter) {
+    if (filter == to.name) {
+      console.log("进入");
+      return next();
+    }
+  }
+  const token = store.getters["user/token"] || "";
+  if (isEmpty(token)) {
+    ElMessage({
+      message: "登录用户信息失效,请重新登录",
+      type: 'warning',
+    });
+    return next("/login");;
+  } else {
+    next();
+  }
 });
 export default router;

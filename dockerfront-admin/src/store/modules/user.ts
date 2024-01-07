@@ -14,17 +14,17 @@ const getDefaultState = () => {
 };
 const state = getDefaultState();
 const mutations = {
-  RESET_STATE: (state: user) => {
+  RESET_STATE: (state: State) => {
     Object.assign(state, getDefaultState());
   },
-  SET_TOKEN: (state: user, token: string) => {
-    state.token = token;
+  SET_TOKEN: (state: State, token: string) => {
+    state.user.token = token;
   },
-  SET_NAME: (state: user, name: string) => {
-    state.name = name;
+  SET_NAME: (state: State, name: string) => {
+    state.user.name = name;
   },
-  SET_AVATAR: (state: user, avatar: string) => {
-    state.avatar = avatar;
+  SET_AVATAR: (state: State, avatar: string) => {
+    state.user.avatar = avatar;
   },
 };
 const actions = {
@@ -33,7 +33,6 @@ const actions = {
         login(userinfo)
         .then((res) => {
           const data = res.data || null;
-          console.log(data);
           if (!data) {
             rject("账号或密码错误,请重新输入!");
             ElMessage({

@@ -6,10 +6,7 @@ const path = require('path');
 module.exports = defineConfig({
   devServer: {
     client: {
-      overlay: {
-        warnings: false,
-        errors: true,
-      }
+      overlay: false
     }
   },
   transpileDependencies: true,

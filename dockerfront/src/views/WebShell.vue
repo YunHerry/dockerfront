@@ -17,6 +17,7 @@
     @exec-cmd="onExecCmd"
     :show-header="false"
     :context="context"
+    :init-log="initLogs"
   ></terminal>
   <!-- </div> -->
 </template>
@@ -48,12 +49,19 @@ import { exec } from "@/api/user";
 import { ca } from "element-plus/es/locale";
 import { Ref, ref } from "vue";
 import { useRoute } from "vue-router";
-import Terminal from "vue-web-terminal";
+import Terminal, { Message } from "vue-web-terminal";
 const route = useRoute();
 const id = route.params.id;
 console.log(id);
 const context = ref("/");
-
+const initLogs: Message[] = [
+  {
+    content: "Terminal Initializing ...",
+  },
+  {
+    content: `Current login time: ${new Date().toDateString()}`,
+  },
+];
 function onExecCmd(
   key: string,
   command: string,
@@ -103,7 +111,7 @@ function onExecCmd(
 function execCommand(command: string): Promise<requestResponse<string>> {
   return exec(`${id}`, command, context.value);
 }
-function calculateNewPath(currentPath:string, cdCommand:string) {
+function calculateNewPath(currentPath: string, cdCommand: string) {
   const isAbsolute = cdCommand.startsWith("/");
 
   const commands = cdCommand.split(/\//);
@@ -117,8 +125,10 @@ function calculateNewPath(currentPath:string, cdCommand:string) {
     }
   }
 
-  currentPath = currentPath.replace(/\/+$/, "").replace(/\/\//g,"").replace(/\/\//g,"")
-
+  currentPath = currentPath
+    .replace(/\/+$/, "")
+    .replace(/\/\//g, "")
+    .replace(/\/\//g, "");
 
   return isAbsolute ? currentPath : "/" + currentPath;
 }
