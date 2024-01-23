@@ -5,7 +5,8 @@
         <img src="@/assets/logo.png" alt="" />
         <span class="logo-name">docker-admin</span>
       </div>
-      <div class="button" v-for="item in menus" @click="clickItem(item)">
+      <div class="current-item" :style="{'top':(nowViewIndex * 60)+61 + 'px'}"></div>
+      <div class="button" v-for="(item,index) in menus" @click="clickItem(item,index)">
         {{ item }}
       </div>
     </div>
@@ -19,23 +20,33 @@
 </template>
 <style scoped lang="scss">
 .button {
+  height: 60px;
+  box-sizing: border-box;
   padding: 20px 0;
   font-weight: bold;
   font-size: 18px;
   cursor: pointer;
 }
-.button:hover {
-  background-color: antiquewhite;
-}
+// .button:hover {
+//   background-color: antiquewhite;
+// }
 .index-content {
   width: 100%;
   height: 100%;
   display: flex;
+  .current-item {
+    position: absolute;
+    height: 60px;
+    width: 6px;
+    background-color: #6EA4FD;
+    transition: 0.2s all ease-in-out;
+  }
 }
 .menu-content {
   height: 100%;
   min-width: 200px;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 .main-content {
   flex: 1;
@@ -77,20 +88,22 @@ import containersManager from "./content-page/containersManager.vue";
 import OrderManager from "./content-page/orderManager.vue";
 import Other from "./content-page/other.vue";
 import PacketManager from "./content-page/packetManager.vue";
-import { DefineComponent, Ref, reactive, ref,markRaw } from "vue";
-type stringKey = Record<string, DefineComponent<any, any, any>>;
-const components: stringKey = {
-  容器管理: markRaw(containersManager),
-  订单管理: markRaw(OrderManager),
-  其他: markRaw(Other),
-  套餐管理: markRaw(PacketManager),
+import { DefineComponent, Ref, reactive, ref, markRaw } from "vue";
+type views = Record<string, DefineComponent<any, any, any>>;
+const components: views = {
+  "容器管理": markRaw(containersManager),
+  "订单管理": markRaw(OrderManager),
+  "其他": markRaw(Other),
+  "套餐管理": markRaw(PacketManager),
 };
 const menus: string[] = [];
 for (let menuName in components) {
   menus.push(menuName);
 }
 let currentView: Ref<any> = ref(containersManager);
-function clickItem(item: string) {
+let nowViewIndex = ref(0);
+function clickItem(item: string,index: number) {
   currentView.value = components[item];
+  nowViewIndex.value = index;
 }
 </script>

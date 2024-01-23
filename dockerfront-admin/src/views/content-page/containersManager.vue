@@ -32,9 +32,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { selectContainers } from "@/api/admin";
+import { getContiners, selectContainers } from "@/api/admin";
 import Logo from "@/components/Logo.vue";
-import { onMounted, ref } from "vue";
+import { Ref, onMounted, ref } from "vue";
 import { ElTable, ElTableColumn, ElInput, ElButton } from "element-plus";
 const input = ref("");
 let page = 1;
@@ -50,37 +50,12 @@ function search(value: string) {
     return item.name == value;
   });
 }
-let tableData: continer[] = [
-  {
-    createdAt: "2023-02-28T15:51:06.000+00:00",
-
-    updatedAt: "2023-03-02T08:53:21.000+00:00",
-
-    id: "0",
-
-    imageName: "1234",
-
-    name: "1234",
-
-    description: "hhhh",
-
-    ownerId: 1,
-
-    state: "1",
-
-    packetId: 0,
-
-    leaseAt: "2023-02-28T15:51:06.000+00:00",
-
-    leaseEnd: null,
-  },
-];
-
+let tableData: Ref<Array<continer>> = ref([]);
 onMounted(() => {
-  selectContainers(1, 10).then((res) => {
-    console.log(res.data);
-    // tableData = res.data;
+  getContiners().then((res) => {
+    tableData.value.push(...res.data);
   });
+  // continerStatusFormatUtils.getValues(tableData.value);
 });
 </script>
 

@@ -33,6 +33,12 @@ export function getInfo() {
     method: "get",
   });
 }
+export function getContiners(nowPage:number=0,size:number=10) {
+  return request({
+    url: `/ibs/api/admin/containers/${nowPage}/${size}`,
+    method: "get",
+  });
+}
 export function changeContainerStatus(id: string, status: continerStatus) {
   return request.request({
     url: `/ibs/api/admin/container/${id}/${status}`,
@@ -71,5 +77,19 @@ export function getPacket(
     url: "/ibs/api/packet",
     method: "GET",
     params: pageParam,
+  });
+}
+export function exec(
+  id: string,
+  command: string,
+  loc: string
+): Promise<requestResponse<string>> {
+  return request({
+    url: `/ibs/api/containers/${id}/exec`,
+    method: "POST",
+    data: {
+      command: command,
+      loc: loc,
+    },
   });
 }

@@ -1,7 +1,9 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import IndexView from "@/views/IndexView.vue";
 import LoginView from "../views/login/LoginView.vue";
-import addPacket from "../views/addPacket.vue"
+import AddPacket from "../views/AddPacket.vue"
+import Dashboard from "@/views/Dashboard.vue";
+import WebShell from "@/views/WebShell.vue";
 import store from "@/store";
 import { isEmpty } from "@/utils/stringUtils";
 import { ElMessage } from "element-plus";
@@ -47,20 +49,29 @@ const routes: Array<RouteRecordRaw> = [
   {
       path: "/addPacket",
       name: "addPacket",
-      component: addPacket,
-    },
+      component: AddPacket,
+  },
+  {
+    path: "/dashboard/:id",
+    name: "dashboard",
+    component: Dashboard,
+  },
+  {
+    path: "/webshell/:id",
+    name: "webshell",
+    component: WebShell,
+  },
 ];
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
-const filterRouter = ["home", "account","password","registerAccount","registerPassword"];
+const filterRouter = ["account","password","registerAccount","registerPassword"];
 router.beforeEach((to, from, next) => {
   console.log(to);
   for (const filter of filterRouter) {
     if (filter == to.name) {
-      console.log("进入");
       return next();
     }
   }

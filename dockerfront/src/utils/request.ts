@@ -12,7 +12,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     //假设store拥有token
-    if (isEmpty(store.getters["user/token"])) {
+    if (!isEmpty(store.getters["user/token"])) {
       config.headers["Authorization"] = getToken(); 
     }
     return config;

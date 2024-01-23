@@ -77,6 +77,7 @@ const actions = {
     const token = getToken() || "";
     return new Promise((resolve, rject) => {
       if (!isEmpty(token)) {
+        console.log(token)
         commit("SET_TOKEN", token);
         setToken(token);
         resolve(token);
