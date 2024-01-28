@@ -25,7 +25,7 @@
                 <i class="iconfont icon-poweroff"></i>
                 开机
               </div>
-              <div @click="controlContiner(continerStatus.STOP)">
+              <div @click="controlContiner(continerStatus.PAUSE)">
                 <i class="iconfont icon-Pause"></i>
                 停机
               </div>

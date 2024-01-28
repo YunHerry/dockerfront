@@ -33,6 +33,12 @@ export function getInfo() {
     method: "GET",
   });
 }
+export function getOrders(pageParam?: pageParam): Promise<requestResponse<Array<order>>> {
+  return request({
+    url: `/ibs/api/order/get/${pageParam?.page||1}/${pageParam?.pageSize||10}`,
+    method: "GET",
+  });
+}
 export function getContainers(
   page: number,
   pageSize: number,
@@ -53,7 +59,9 @@ export function getPacket(
     params: pageParam,
   });
 }
-export function getImages(pageParam?: pageParam):Promise<requestResponse<Array<image>>> {
+export function getImages(
+  pageParam?: pageParam
+): Promise<requestResponse<Array<image>>> {
   return request({
     url: "/ibs/api/images",
     method: "POST",
@@ -69,7 +77,7 @@ export function getImage(label: string, version: string) {
   });
 }
 export function createOrder(packetId: number, config: orderPacket) {
-  console.log(config)
+  console.log(config);
   return request({
     url: `/ibs/api/order/create?id=${packetId}`,
     method: "POST",

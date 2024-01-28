@@ -5,7 +5,8 @@ import DockerManager from "../views/DockerManager.vue";
 import Order from "../views/order/Order.vue";
 import DefaultOrder from "../views/order/pages/DefaultOrder.vue";
 // import CustomOrder from "../views/order/pages/CustomOrder.vue";
-import Dashboard from "@/views/Dashboard.vue";
+import ContainerDashboard from "@/views/ContainerDashboard.vue";
+import UserDashboard from "@/views/UserDashboard.vue";
 import WebShell from "../views/WebShell.vue";
 import { ElMessage } from "element-plus";
 import { h } from "vue";
@@ -74,9 +75,14 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
-    path: "/dashboard/:id",
-    name: "dashboard",
-    component: Dashboard,
+    path: "/containerDashboard/:id",
+    name: "containerDashboard",
+    component: ContainerDashboard,
+  },
+  {
+    path: "/userDashboard/",
+    name: "userDashboard",
+    component: UserDashboard,
   },
   {
     path: "/webshell/:id",
