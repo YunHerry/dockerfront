@@ -4,7 +4,7 @@ const TOKEN = "auth_token";
 export function setToken(token: string) {
   Cookie.set(TOKEN, token, {
     expires: new Date(
-      Date.now() + process.env.VUE_APP_TOKEN_EXPIRES * 60 * 1000
+      Date.now() + 10000 * 60 * 1000
     ),
   });
 }

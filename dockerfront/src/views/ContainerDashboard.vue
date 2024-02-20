@@ -33,6 +33,10 @@
                 <i class="iconfont icon-redo"></i>
                 重启
               </div>
+              <!-- <div @click="initTest">
+                <i class="iconfont icon-redo"></i>
+                重启
+              </div> -->
             </div>
           </div>
           <div class="info-item"></div>
@@ -43,50 +47,145 @@
 </template>
 <script lang="ts" setup>
 import UserTop from "@/components/user/UserTop.vue";
-import { getCurrentInstance, onMounted } from "vue";
-import { ECharts, EChartsOption, init } from "echarts";
+import { getCurrentInstance, onMounted, onUnmounted } from "vue";
+import { ECharts, EChartsOption, init, SeriesOption } from "echarts";
 import { changeContainerStatus } from "@/api/user";
 import { continerStatus } from "@/constant";
 import { useRoute } from "vue-router";
+import store from "@/store";
+import { IMessageEvent, w3cwebsocket } from "websocket";
+import { ElMessage } from "element-plus";
 let diagram: ECharts;
 const route = useRoute();
 const id = route.params.id as string;
+console.log(store.getters["user/token"]);
+//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA4NjgwNTYwLCJhY2NvdW50IjoiMTAwMCJ9.0y_UCswaMvXo-Yqyq1geJ-nuoz7F8caU6wbxVNIH0mI/988d0a632f8c98fa8d46678e08850874e719a40d37b6f3b28ab8e189295c1fc4
+/**
+ * {
+  headers: {
+    Authorization: store.getters["user/token"],
+  }
+}
+ */
+//console.log(`ws://localhost:8888/ibs/api/containers/dashboard/${store.getters["user/token"]}/${id}`);
+// console.log(client);
+let cpuOption: EChartsOption = {
+  title: {
+    text: "CPU占用",
+  },
+  tooltip: {},
+  legend: {
+    data: ["销量"],
+  },
+  xAxis: {
+    data: new Array(),
+  },
+  yAxis: {
+     max:100
+  },
+  series: [
+    {
+      type: "line",
+      smooth: true,
+      data: [],
+      areaStyle: {},
+    },
+  ],
+};
+interface containerData {
+    [key:string]:number;
+    cpuPortion:number;
+    memoryPortion:number;
+  }
+function initDiagram(diagramDom: HTMLElement | null, option: EChartsOption,pushKey: string) {
+  diagram = init(diagramDom);
+  diagram.setOption(option);
+  const optionRef = option;
+  return (data:containerData|containerData[]) => {
+    const series: SeriesOption = (cpuOption.series as SeriesOption[])[0];
+    if(Array.isArray(data)) {
+       let filterArr = data.map((val,index)=>
+           val[pushKey]
+       );
+      series.data instanceof Array ? series.data.push(...filterArr): null;
+    } else {
+      console.log(data);
+      series.data instanceof Array ? series.data.push(data[pushKey]): null;
+    }
+    diagram.setOption(optionRef);
+  };
+}
+let cpuDiagramUpdate:Function|null = null;
+function websocketInit() {
+  const client = new w3cwebsocket(
+    `ws://localhost:8888/ibs/api/socket/dashboard/${store.getters["user/token"]}/${id}`
+  );
+  let websocketTimer: NodeJS.Timer | null = null;
+  client.onerror = () => {
+    console.log("websocket连接失败");
+  };
+
+  client.onopen = () => {
+    console.log("打开成功");
+    client.send("init");
+    websocketTimer = setInterval(() => {
+      client.send("current");
+    }, 1000);
+  };
+
+  client.onmessage = (event: IMessageEvent) => {
+    const dataArr = JSON.parse(event.data.toString());
+    cpuDiagramUpdate instanceof Function ? cpuDiagramUpdate(dataArr):null;
+  };
+  client.onclose = function (e) {
+    console.log("链接断开");
+    console.log(e);
+  };
+
+  return {
+    close: () => {
+      clearTimeout(websocketTimer as NodeJS.Timer);
+      client.close();
+    },
+    client: client,
+  };
+}
+const client = websocketInit();
+onUnmounted(() => {
+  client.close();
+});
+// the option must is a reference type
+interface option {
+  title: {
+    text: string;
+  };
+  tooltip: {};
+  legend: {
+    data: string[];
+  };
+  xAxis: {
+    data: any[];
+  };
+  yAxis: {};
+  series: {
+    type: string;
+    smooth: boolean;
+    data: number[];
+    areaStyle: {};
+  }[];
+}
 onMounted(() => {
   const target = getCurrentInstance();
-  diagram = init(document.getElementById("cpu"));
-  var option = {
-    title: {
-      text: "CPU占用",
-    },
-    tooltip: {},
-    legend: {
-      data: ["销量"],
-    },
-    xAxis: {
-      data: new Array(),
-    },
-    yAxis: {},
-    series: [
-      {
-        type: "line",
-        smooth: true,
-        data: [0, 5, 20, 36, 10, 10, 20],
-        areaStyle: {},
-      },
-    ],
-  };
+  cpuDiagramUpdate = initDiagram(document.getElementById("cpu"), cpuOption,"cpuPortion");
   // 使用刚指定的配置项和数据显示图表。
-  diagram.setOption(option);
-  setInterval(() => {
-    let now = new Date();
-    option.xAxis.data.push(`${now.getHours()}:${now.getMinutes()}`);
-    option.series[0].data.push(Math.random() * 100);
-    diagram.setOption(option);
-  }, 60000);
 });
 function controlContiner(status: continerStatus) {
-  console.log(id)
-  changeContainerStatus(id, status);
+  changeContainerStatus(id, status).then(res=>{
+    ElMessage({
+      type: "success",
+      message: "修改状态成功",
+    })
+  });
 }
 </script>
 <style lang="scss" scoped>

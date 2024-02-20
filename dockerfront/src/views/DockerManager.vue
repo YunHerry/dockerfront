@@ -31,7 +31,7 @@
                 <!-- <RouterLink :to="'/webshell/1111111111111'">
                   <el-button size="small" @click="">编辑参数</el-button>
                 </RouterLink> -->
-                <RouterLink :to="'/dashboard/' + scope.row.id">
+                <RouterLink :to="'/containerDashboard/' + scope.row.id">
                   <el-button size="small" @click="">仪表盘</el-button>
                 </RouterLink>
                 <RouterLink :to="'/webshell/' + scope.row.id" v-show="scope.row.state == 1">
