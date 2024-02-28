@@ -1,7 +1,7 @@
 import request from "@/utils/request";
 import { AxiosResponse } from "axios";
 import { continerStatus } from "@/constant";
-export function login(data: userInfo): Promise<requestResponse<string>> {
+export function login(data: userInfo): Promise<requestResponse<user>> {
   return request({
     url: "/ibs/api/verify/login",
     method: "POST",

@@ -13,10 +13,11 @@
             <span>CPU: i7-6500U 2400 GHZ</span>
             <span>硬盘: 90 / 100 GB</span>
             <span>带宽: 4 Mbp</span>
+            <span>状态: {{ status }}</span>
           </div>
           <!-- 仪表图 -->
           <div class="info-item">
-            <div id="cpu" style="width: 600px; height: 500px"></div>
+            <div id="cpu"></div>
           </div>
           <div class="info-item">
             <div class="docker-title">操作</div>
@@ -39,7 +40,9 @@
               </div> -->
             </div>
           </div>
-          <div class="info-item"></div>
+          <div class="info-item">
+            <div id="memory"></div>
+          </div>
         </div>
       </el-main>
     </el-container>
@@ -47,7 +50,7 @@
 </template>
 <script lang="ts" setup>
 import UserTop from "@/components/user/UserTop.vue";
-import { getCurrentInstance, onMounted, onUnmounted } from "vue";
+import { getCurrentInstance, onMounted, onUnmounted, ref } from "vue";
 import { ECharts, EChartsOption, init, SeriesOption } from "echarts";
 import { changeContainerStatus } from "@/api/user";
 import { continerStatus } from "@/constant";
@@ -55,10 +58,10 @@ import { useRoute } from "vue-router";
 import store from "@/store";
 import { IMessageEvent, w3cwebsocket } from "websocket";
 import { ElMessage } from "element-plus";
-let diagram: ECharts;
 const route = useRoute();
 const id = route.params.id as string;
 console.log(store.getters["user/token"]);
+const status = ref();
 //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA4NjgwNTYwLCJhY2NvdW50IjoiMTAwMCJ9.0y_UCswaMvXo-Yqyq1geJ-nuoz7F8caU6wbxVNIH0mI/988d0a632f8c98fa8d46678e08850874e719a40d37b6f3b28ab8e189295c1fc4
 /**
  * {
@@ -71,17 +74,38 @@ console.log(store.getters["user/token"]);
 // console.log(client);
 let cpuOption: EChartsOption = {
   title: {
-    text: "CPU占用",
+    text: "CPU占用(%)",
   },
   tooltip: {},
-  legend: {
-    data: ["销量"],
-  },
+
   xAxis: {
     data: new Array(),
+    boundaryGap: false,
   },
   yAxis: {
-     max:100
+    max: 100,
+  },
+  series: [
+    {
+      type: "line",
+      smooth: true,
+      data: [],
+      areaStyle: {},
+    },
+  ],
+};
+let memoryOption: EChartsOption = {
+  title: {
+    text: "内存占用(%)",
+  },
+  tooltip: {},
+
+  xAxis: {
+    data: new Array(),
+    boundaryGap: false,
+  },
+  yAxis: {
+    max: 100,
   },
   series: [
     {
@@ -93,33 +117,47 @@ let cpuOption: EChartsOption = {
   ],
 };
 interface containerData {
-    [key:string]:number;
-    cpuPortion:number;
-    memoryPortion:number;
-  }
-function initDiagram(diagramDom: HTMLElement | null, option: EChartsOption,pushKey: string) {
-  diagram = init(diagramDom);
+  [key: string]: number;
+  cpuPortion: number;
+  memoryPortion: number;
+}
+let gobalDiagram: ECharts[] = [];
+function initDiagram(
+  diagramDom: HTMLElement | null,
+  option: EChartsOption,
+  pushKey: string
+) {
+  const diagram = init(diagramDom);
   diagram.setOption(option);
-  const optionRef = option;
-  return (data:containerData|containerData[]) => {
-    const series: SeriesOption = (cpuOption.series as SeriesOption[])[0];
-    if(Array.isArray(data)) {
-       let filterArr = data.map((val,index)=>
-           val[pushKey]
-       );
-      series.data instanceof Array ? series.data.push(...filterArr): null;
+  window.addEventListener("resize", () => {
+    for (const diagramObj of gobalDiagram) diagramObj.resize();
+  });
+  gobalDiagram.push(diagram);
+  return (data: containerData | containerData[]) => {
+    const series: SeriesOption = (option.series as SeriesOption[])[0];
+    if (Array.isArray(data)) {
+      let filterArr = data.map((val, index) => val[pushKey]);
+      series.data instanceof Array ? series.data.push(...filterArr) : null;
     } else {
-      console.log(data);
-      series.data instanceof Array ? series.data.push(data[pushKey]): null;
+      series.data instanceof Array ? series.data.push(data[pushKey]) : null;
+      console.log(data[pushKey]);
     }
-    diagram.setOption(optionRef);
+    diagram.setOption(option);
   };
 }
-let cpuDiagramUpdate:Function|null = null;
-function websocketInit() {
+let cpuDiagramUpdate: Function | null = null;
+let memoryDiagramUpdate: Function | null = null;
+function websocketInit(
+  openFunction: (client: w3cwebsocket) => Promise<void>,
+  timerFunction: (client: w3cwebsocket) => void,
+  onMessage: (data: any) => void
+) {
   const client = new w3cwebsocket(
     `ws://localhost:8888/ibs/api/socket/dashboard/${store.getters["user/token"]}/${id}`
   );
+  //true is sending
+  //@TODO
+  let waitFlag = false;
   let websocketTimer: NodeJS.Timer | null = null;
   client.onerror = () => {
     console.log("websocket连接失败");
@@ -127,15 +165,22 @@ function websocketInit() {
 
   client.onopen = () => {
     console.log("打开成功");
-    client.send("init");
-    websocketTimer = setInterval(() => {
-      client.send("current");
-    }, 1000);
+    openFunction(client).then(() => {
+      //@TODO the init need to wait for last respond
+      // timerFunction(client);
+      //temp function
+      setTimeout(() => {
+        timerFunction(client);
+      }, 2000);
+      websocketTimer = setInterval(() => {
+        timerFunction(client);
+      }, 60000);
+    });
   };
 
   client.onmessage = (event: IMessageEvent) => {
     const dataArr = JSON.parse(event.data.toString());
-    cpuDiagramUpdate instanceof Function ? cpuDiagramUpdate(dataArr):null;
+    onMessage(dataArr);
   };
   client.onclose = function (e) {
     console.log("链接断开");
@@ -150,9 +195,38 @@ function websocketInit() {
     client: client,
   };
 }
-const client = websocketInit();
+
+const client = websocketInit(
+  (client) => {
+    return new Promise((resolve, reject) => {
+      client.send("init");
+      resolve();
+    });
+  },
+  (client) => {
+    client.send("current");
+  },
+  (data) => {
+    cpuDiagramUpdate instanceof Function ? cpuDiagramUpdate(data) : null;
+    memoryDiagramUpdate instanceof Function ? memoryDiagramUpdate(data) : null;
+  }
+);
+const statusClient = websocketInit(
+  (client) => {
+    return new Promise((resolve, reject) => {
+      resolve();
+    });
+  },
+  (client) => {
+    client.send("status");
+  },
+  (data) => {
+    status.value = data;
+  }
+);
 onUnmounted(() => {
   client.close();
+  statusClient.close();
 });
 // the option must is a reference type
 interface option {
@@ -176,18 +250,31 @@ interface option {
 }
 onMounted(() => {
   const target = getCurrentInstance();
-  cpuDiagramUpdate = initDiagram(document.getElementById("cpu"), cpuOption,"cpuPortion");
+  cpuDiagramUpdate = initDiagram(
+    document.getElementById("cpu"),
+    cpuOption,
+    "cpuPortion"
+  );
+  memoryDiagramUpdate = initDiagram(
+    document.getElementById("memory"),
+    memoryOption,
+    "memoryPortion"
+  );
   // 使用刚指定的配置项和数据显示图表。
+  window.onbeforeunload = (e) => {
+    client.close();
+  };
 });
 function controlContiner(status: continerStatus) {
-  changeContainerStatus(id, status).then(res=>{
+  changeContainerStatus(id, status).then((res) => {
     ElMessage({
       type: "success",
       message: "修改状态成功",
-    })
+    });
   });
 }
 </script>
+<!-- websocket close -->
 <style lang="scss" scoped>
 .docker-work {
   display: flex;
@@ -240,6 +327,11 @@ function controlContiner(status: continerStatus) {
     & > span {
       color: $gray;
       margin-top: 10px;
+    }
+    #cpu,
+    #memory {
+      width: 100%;
+      height: 100%;
     }
   }
 }
