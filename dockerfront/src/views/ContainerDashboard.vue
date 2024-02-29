@@ -13,7 +13,10 @@
             <span>CPU: i7-6500U 2400 GHZ</span>
             <span>硬盘: 90 / 100 GB</span>
             <span>带宽: 4 Mbp</span>
-            <span>状态: {{ status }}</span>
+            <span
+              >状态:
+              <span class="status" :class="status">{{ status }}</span></span
+            >
           </div>
           <!-- 仪表图 -->
           <div class="info-item">
@@ -267,6 +270,7 @@ onMounted(() => {
 });
 function controlContiner(status: continerStatus) {
   changeContainerStatus(id, status).then((res) => {
+    statusClient.client.send("status");
     ElMessage({
       type: "success",
       message: "修改状态成功",
@@ -332,6 +336,9 @@ function controlContiner(status: continerStatus) {
     #memory {
       width: 100%;
       height: 100%;
+    }
+    .status.running {
+      color: #41b983;
     }
   }
 }
