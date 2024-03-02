@@ -10,7 +10,7 @@ interface props {
   height: string;
 }
 let props = withDefaults(defineProps<props>(), {
-  height: "40px",
+  height: "28px",
 });
 let imageStyle = computed(() => {
   return {

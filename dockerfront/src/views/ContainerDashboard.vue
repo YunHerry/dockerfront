@@ -64,7 +64,7 @@ import { ElMessage } from "element-plus";
 const route = useRoute();
 const id = route.params.id as string;
 console.log(store.getters["user/token"]);
-const status = ref();
+const status = ref("running");
 //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA4NjgwNTYwLCJhY2NvdW50IjoiMTAwMCJ9.0y_UCswaMvXo-Yqyq1geJ-nuoz7F8caU6wbxVNIH0mI/988d0a632f8c98fa8d46678e08850874e719a40d37b6f3b28ab8e189295c1fc4
 /**
  * {
@@ -86,7 +86,7 @@ let cpuOption: EChartsOption = {
     boundaryGap: false,
   },
   yAxis: {
-    max: 100,
+    // max: 100,
   },
   series: [
     {
@@ -108,7 +108,7 @@ let memoryOption: EChartsOption = {
     boundaryGap: false,
   },
   yAxis: {
-    max: 100,
+    // max: 100,
   },
   series: [
     {
@@ -139,10 +139,10 @@ function initDiagram(
   return (data: containerData | containerData[]) => {
     const series: SeriesOption = (option.series as SeriesOption[])[0];
     if (Array.isArray(data)) {
-      let filterArr = data.map((val, index) => val[pushKey]);
+      let filterArr = data.map((val, index) => val[pushKey].toFixed(2));
       series.data instanceof Array ? series.data.push(...filterArr) : null;
     } else {
-      series.data instanceof Array ? series.data.push(data[pushKey]) : null;
+      series.data instanceof Array ? series.data.push(data[pushKey].toFixed(2)) : null;
       console.log(data[pushKey]);
     }
     diagram.setOption(option);
@@ -168,16 +168,19 @@ function websocketInit(
 
   client.onopen = () => {
     console.log("打开成功");
+    const isRuning = (statusStr:string) => statusStr == "running";
     openFunction(client).then(() => {
       //@TODO the init need to wait for last respond
       // timerFunction(client);
       //temp function
       setTimeout(() => {
+        if(!isRuning(status.value)) return;
         timerFunction(client);
       }, 2000);
       websocketTimer = setInterval(() => {
+        if(!isRuning(status.value)) return;
         timerFunction(client);
-      }, 60000);
+      }, 6000);
     });
   };
 
