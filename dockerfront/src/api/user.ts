@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 import { AxiosResponse } from "axios";
-import { continerStatus } from "@/constant";
+import { continerStatus, continerWorkStatus } from "@/constant";
 export function login(data: userInfo): Promise<requestResponse<user>> {
   return request({
     url: "/ibs/api/verify/login",
@@ -96,7 +96,7 @@ export function createPacketOrder(label: string, version: string) {
     method: "POST",
   });
 }
-export function changeContainerStatus(id: string, status: continerStatus) {
+export function changeContainerStatus(id: string, status: continerWorkStatus) {
   return request({
     url: `/ibs/api/containers/${id}/${status}`,
     method: "POST",

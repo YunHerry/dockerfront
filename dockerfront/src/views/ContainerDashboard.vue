@@ -25,15 +25,15 @@
           <div class="info-item">
             <div class="docker-title">操作</div>
             <div class="docker-work">
-              <div @click="controlContiner(continerStatus.RUN)">
+              <div v-show="isShow(continerWorkStatus.RUN)" @click="controlContiner(continerWorkStatus.RUN)">
                 <i class="iconfont icon-poweroff"></i>
                 开机
               </div>
-              <div @click="controlContiner(continerStatus.STOP)">
+              <div v-show="isShow(continerWorkStatus.STOP)"  @click="controlContiner(continerWorkStatus.STOP)">
                 <i class="iconfont icon-Pause"></i>
                 停机
               </div>
-              <div @click="controlContiner(continerStatus.RESTART)">
+              <div v-show="isShow(continerWorkStatus.RESTART)"  @click="controlContiner(continerWorkStatus.RESTART)">
                 <i class="iconfont icon-redo"></i>
                 重启
               </div>
@@ -53,10 +53,10 @@
 </template>
 <script lang="ts" setup>
 import UserTop from "@/components/user/UserTop.vue";
-import { getCurrentInstance, onMounted, onUnmounted, ref } from "vue";
+import { Ref, getCurrentInstance, onMounted, onUnmounted, ref } from "vue";
 import { ECharts, EChartsOption, init, SeriesOption } from "echarts";
 import { changeContainerStatus } from "@/api/user";
-import { continerStatus } from "@/constant";
+import { continerWorkStatus,continerStatus } from "@/constant";
 import { useRoute } from "vue-router";
 import store from "@/store";
 import { IMessageEvent, w3cwebsocket } from "websocket";
@@ -64,7 +64,7 @@ import { ElMessage } from "element-plus";
 const route = useRoute();
 const id = route.params.id as string;
 console.log(store.getters["user/token"]);
-const status = ref("running");
+const status:Ref<continerStatus> = ref(continerStatus.RUNNING);
 //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA4NjgwNTYwLCJhY2NvdW50IjoiMTAwMCJ9.0y_UCswaMvXo-Yqyq1geJ-nuoz7F8caU6wbxVNIH0mI/988d0a632f8c98fa8d46678e08850874e719a40d37b6f3b28ab8e189295c1fc4
 /**
  * {
@@ -75,6 +75,17 @@ const status = ref("running");
  */
 //console.log(`ws://localhost:8888/ibs/api/containers/dashboard/${store.getters["user/token"]}/${id}`);
 // console.log(client);
+function isShow(buttonType:continerWorkStatus) {
+  const linkObj:{
+    [key:string]:Array<continerWorkStatus>
+  } = {
+    "running": [continerWorkStatus.STOP,continerWorkStatus.PAUSE,continerWorkStatus.RESTART,continerWorkStatus.DELETE],
+    "exited": [continerWorkStatus.RESTART,continerWorkStatus.DELETE,continerWorkStatus.RUN],
+    "created": [],
+    "paused": [continerWorkStatus.RESTART,continerWorkStatus.DELETE,continerWorkStatus.RUN],
+  }
+  return linkObj[status.value].includes(buttonType);
+}
 let cpuOption: EChartsOption = {
   title: {
     text: "CPU占用(%)",
@@ -271,7 +282,7 @@ onMounted(() => {
     client.close();
   };
 });
-function controlContiner(status: continerStatus) {
+function controlContiner(status: continerWorkStatus) {
   changeContainerStatus(id, status).then((res) => {
     statusClient.client.send("status");
     ElMessage({
