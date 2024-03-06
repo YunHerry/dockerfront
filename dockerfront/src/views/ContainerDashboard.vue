@@ -8,15 +8,41 @@
         <div class="infos-content">
           <div class="info-item">
             <div class="docker-title">容器信息</div>
-            <span>系统: Centos</span>
-            <span>内存: 4G</span>
-            <span>CPU: i7-6500U 2400 GHZ</span>
-            <span>硬盘: 90 / 100 GB</span>
-            <span>带宽: 4 Mbp</span>
-            <span
-              >状态:
-              <span class="status" :class="status">{{ status }}</span></span
-            >
+            <el-skeleton :loading="!containerInfo" :rows="5" animated>
+              <template #default>
+                <div class="container-info">ID: {{ containerInfo?.id }}</div>
+                <div class="container-info">内存: {{ containerInfo?.memory }}G</div>
+                <div class="container-info">CPU核心数: {{ containerInfo?.cpuCoreNumber }}h</div>
+                <!-- <span>硬盘: 90 / 100 GB</span> -->
+                <div class="container-info">硬盘: {{ containerInfo?.disk }} GB</div>
+                <div class="container-info">带宽: {{ containerInfo?.networkSpeed }} Mbp</div>
+                <div  class="container-info"
+                  >状态:
+                  <span class="status" :class="status">{{ status }}</span></div
+                >
+              </template>
+              <template #template>
+                <div
+                  >ID: <el-skeleton-item variant="span" style="width: 20%"
+                /></div>
+                <div
+                  >内存: <el-skeleton-item variant="span" style="width: 20%"
+                /></div>
+                <div
+                  >CPU核心数:
+                  <el-skeleton-item variant="span" style="width: 20%"
+                /></div>
+                <div
+                  >硬盘: <el-skeleton-item variant="span" style="width: 20%"
+                /></div>
+                <div
+                  >带宽: <el-skeleton-item variant="span" style="width: 20%"
+                /></div>
+                <div
+                  >状态: <el-skeleton-item variant="span" style="width: 20%"
+                /></div>
+              </template>
+            </el-skeleton>
           </div>
           <!-- 仪表图 -->
           <div class="info-item">
@@ -25,15 +51,24 @@
           <div class="info-item">
             <div class="docker-title">操作</div>
             <div class="docker-work">
-              <div v-show="isShow(continerWorkStatus.RUN)" @click="controlContiner(continerWorkStatus.RUN)">
+              <div
+                v-show="isShow(continerWorkStatus.RUN)"
+                @click="controlContiner(continerWorkStatus.RUN)"
+              >
                 <i class="iconfont icon-poweroff"></i>
                 开机
               </div>
-              <div v-show="isShow(continerWorkStatus.STOP)"  @click="controlContiner(continerWorkStatus.STOP)">
+              <div
+                v-show="isShow(continerWorkStatus.STOP)"
+                @click="controlContiner(continerWorkStatus.STOP)"
+              >
                 <i class="iconfont icon-Pause"></i>
                 停机
               </div>
-              <div v-show="isShow(continerWorkStatus.RESTART)"  @click="controlContiner(continerWorkStatus.RESTART)">
+              <div
+                v-show="isShow(continerWorkStatus.RESTART)"
+                @click="controlContiner(continerWorkStatus.RESTART)"
+              >
                 <i class="iconfont icon-redo"></i>
                 重启
               </div>
@@ -54,9 +89,9 @@
 <script lang="ts" setup>
 import UserTop from "@/components/user/UserTop.vue";
 import { Ref, getCurrentInstance, onMounted, onUnmounted, ref } from "vue";
-import { ECharts, EChartsOption, init, SeriesOption } from "echarts";
-import { changeContainerStatus } from "@/api/user";
-import { continerWorkStatus,continerStatus } from "@/constant";
+import { ECharts, EChartsOption, init, SeriesOption, throttle } from "echarts";
+import { changeContainerStatus, getContainerInfo } from "@/api/user";
+import { continerWorkStatus, continerStatus } from "@/constant";
 import { useRoute } from "vue-router";
 import store from "@/store";
 import { IMessageEvent, w3cwebsocket } from "websocket";
@@ -64,7 +99,8 @@ import { ElMessage } from "element-plus";
 const route = useRoute();
 const id = route.params.id as string;
 console.log(store.getters["user/token"]);
-const status:Ref<continerStatus> = ref(continerStatus.RUNNING);
+const status: Ref<continerStatus> = ref(continerStatus.RUNNING);
+const containerInfo: Ref<containerInfo | null> = ref(null);
 //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA4NjgwNTYwLCJhY2NvdW50IjoiMTAwMCJ9.0y_UCswaMvXo-Yqyq1geJ-nuoz7F8caU6wbxVNIH0mI/988d0a632f8c98fa8d46678e08850874e719a40d37b6f3b28ab8e189295c1fc4
 /**
  * {
@@ -75,15 +111,28 @@ const status:Ref<continerStatus> = ref(continerStatus.RUNNING);
  */
 //console.log(`ws://localhost:8888/ibs/api/containers/dashboard/${store.getters["user/token"]}/${id}`);
 // console.log(client);
-function isShow(buttonType:continerWorkStatus) {
-  const linkObj:{
-    [key:string]:Array<continerWorkStatus>
+function isShow(buttonType: continerWorkStatus) {
+  const linkObj: {
+    [key: string]: Array<continerWorkStatus>;
   } = {
-    "running": [continerWorkStatus.STOP,continerWorkStatus.PAUSE,continerWorkStatus.RESTART,continerWorkStatus.DELETE],
-    "exited": [continerWorkStatus.RESTART,continerWorkStatus.DELETE,continerWorkStatus.RUN],
-    "created": [],
-    "paused": [continerWorkStatus.RESTART,continerWorkStatus.DELETE,continerWorkStatus.RUN],
-  }
+    running: [
+      continerWorkStatus.STOP,
+      continerWorkStatus.PAUSE,
+      continerWorkStatus.RESTART,
+      continerWorkStatus.DELETE,
+    ],
+    exited: [
+      continerWorkStatus.RESTART,
+      continerWorkStatus.DELETE,
+      continerWorkStatus.RUN,
+    ],
+    created: [],
+    paused: [
+      continerWorkStatus.RESTART,
+      continerWorkStatus.DELETE,
+      continerWorkStatus.RUN,
+    ],
+  };
   return linkObj[status.value].includes(buttonType);
 }
 let cpuOption: EChartsOption = {
@@ -153,7 +202,9 @@ function initDiagram(
       let filterArr = data.map((val, index) => val[pushKey].toFixed(2));
       series.data instanceof Array ? series.data.push(...filterArr) : null;
     } else {
-      series.data instanceof Array ? series.data.push(data[pushKey].toFixed(2)) : null;
+      series.data instanceof Array
+        ? series.data.push(data[pushKey].toFixed(2))
+        : null;
       console.log(data[pushKey]);
     }
     diagram.setOption(option);
@@ -176,20 +227,19 @@ function websocketInit(
   client.onerror = () => {
     console.log("websocket连接失败");
   };
-
   client.onopen = () => {
     console.log("打开成功");
-    const isRuning = (statusStr:string) => statusStr == "running";
+    const isRuning = (statusStr: string) => statusStr == "running";
     openFunction(client).then(() => {
       //@TODO the init need to wait for last respond
       // timerFunction(client);
       //temp function
       setTimeout(() => {
-        if(!isRuning(status.value)) return;
+        if (!isRuning(status.value)) return;
         timerFunction(client);
       }, 2000);
       websocketTimer = setInterval(() => {
-        if(!isRuning(status.value)) return;
+        if (!isRuning(status.value)) return;
         timerFunction(client);
       }, 6000);
     });
@@ -266,21 +316,24 @@ interface option {
   }[];
 }
 onMounted(() => {
-  const target = getCurrentInstance();
-  cpuDiagramUpdate = initDiagram(
-    document.getElementById("cpu"),
-    cpuOption,
-    "cpuPortion"
-  );
-  memoryDiagramUpdate = initDiagram(
-    document.getElementById("memory"),
-    memoryOption,
-    "memoryPortion"
-  );
-  // 使用刚指定的配置项和数据显示图表。
-  window.onbeforeunload = (e) => {
-    client.close();
-  };
+  getContainerInfo(id).then((res) => {
+    // const target = getCurrentInstance();
+    containerInfo.value = res.data;
+    cpuDiagramUpdate = initDiagram(
+      document.getElementById("cpu"),
+      cpuOption,
+      "cpuPortion"
+    );
+    memoryDiagramUpdate = initDiagram(
+      document.getElementById("memory"),
+      memoryOption,
+      "memoryPortion"
+    );
+    // 使用刚指定的配置项和数据显示图表。
+    window.onbeforeunload = (e) => {
+      client.close();
+    };
+  });
 });
 function controlContiner(status: continerWorkStatus) {
   changeContainerStatus(id, status).then((res) => {
@@ -342,7 +395,7 @@ function controlContiner(status: continerWorkStatus) {
       // 去除第3n个的margin-right
       margin-right: 0;
     }
-    & > span {
+    & .container-info,& .el-skeleton > div {
       color: $gray;
       margin-top: 10px;
     }

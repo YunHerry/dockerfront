@@ -102,6 +102,12 @@ export function changeContainerStatus(id: string, status: continerWorkStatus) {
     method: "POST",
   });
 }
+export function getContainerInfo(containerId:string): Promise<requestResponse<containerInfo>> {
+  return request({
+    url: `/ibs/api/hardware/get/${containerId}`,
+    method: "GET",
+  });
+}
 export function exec(
   id: string,
   command: string,
