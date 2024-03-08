@@ -96,6 +96,7 @@ import { useRoute } from "vue-router";
 import store from "@/store";
 import { IMessageEvent, w3cwebsocket } from "websocket";
 import { ElMessage } from "element-plus";
+import { websocketInit } from "@/utils/websocket";
 const route = useRoute();
 const id = route.params.id as string;
 console.log(store.getters["user/token"]);
@@ -212,84 +213,38 @@ function initDiagram(
 }
 let cpuDiagramUpdate: Function | null = null;
 let memoryDiagramUpdate: Function | null = null;
-function websocketInit(
-  openFunction: (client: w3cwebsocket) => Promise<void>,
-  timerFunction: (client: w3cwebsocket) => void,
-  onMessage: (data: any) => void
-) {
-  const client = new w3cwebsocket(
-    `ws://localhost:8888/ibs/api/socket/dashboard/${store.getters["user/token"]}/${id}`
-  );
-  //true is sending
-  //@TODO
-  let waitFlag = false;
-  let websocketTimer: NodeJS.Timer | null = null;
-  client.onerror = () => {
-    console.log("websocket连接失败");
-  };
-  client.onopen = () => {
-    console.log("打开成功");
-    const isRuning = (statusStr: string) => statusStr == "running";
-    openFunction(client).then(() => {
-      //@TODO the init need to wait for last respond
-      // timerFunction(client);
-      //temp function
-      setTimeout(() => {
-        if (!isRuning(status.value)) return;
-        timerFunction(client);
-      }, 2000);
-      websocketTimer = setInterval(() => {
-        if (!isRuning(status.value)) return;
-        timerFunction(client);
-      }, 6000);
-    });
-  };
-
-  client.onmessage = (event: IMessageEvent) => {
-    const dataArr = JSON.parse(event.data.toString());
-    onMessage(dataArr);
-  };
-  client.onclose = function (e) {
-    console.log("链接断开");
-    console.log(e);
-  };
-
-  return {
-    close: () => {
-      clearTimeout(websocketTimer as NodeJS.Timer);
-      client.close();
-    },
-    client: client,
-  };
-}
-
+const isRuning = (statusStr: string) => statusStr == "running";
 const client = websocketInit(
+  `ws://localhost:8888/ibs/api/socket/dashboard/${store.getters["user/token"]}/${id}`,
   (client) => {
     return new Promise((resolve, reject) => {
       client.send("init");
       resolve();
     });
   },
-  (client) => {
-    client.send("current");
-  },
   (data) => {
     cpuDiagramUpdate instanceof Function ? cpuDiagramUpdate(data) : null;
     memoryDiagramUpdate instanceof Function ? memoryDiagramUpdate(data) : null;
-  }
+  },
+  (client) => {
+    client.send("current");
+  },
+  ()=>isRuning(status.value)
 );
 const statusClient = websocketInit(
+  `ws://localhost:8888/ibs/api/socket/dashboard/${store.getters["user/token"]}/${id}`,
   (client) => {
     return new Promise((resolve, reject) => {
       resolve();
     });
   },
+  (data) => {
+    status.value = data;
+  },
   (client) => {
     client.send("status");
   },
-  (data) => {
-    status.value = data;
-  }
+  ()=>isRuning(status.value)
 );
 onUnmounted(() => {
   client.close();
