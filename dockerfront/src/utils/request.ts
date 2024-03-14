@@ -3,7 +3,7 @@ import axios from "axios";
 import router from "@/router/index"
 import { isEmpty } from "./stringUtils";
 import { ElMessage } from "element-plus";
-import { getToken } from "@/utils/auth";
+import { getUserInfo } from "@/utils/auth";
 const service = axios.create({
   baseURL: "http://localhost:8888",
   withCredentials: false,
@@ -13,7 +13,7 @@ service.interceptors.request.use(
   config => {
     //假设store拥有token
     if (!isEmpty(store.getters["user/token"])) {
-      config.headers["Authorization"] = getToken(); 
+      config.headers["Authorization"] = getUserInfo().token; 
     }
     return config;
   },

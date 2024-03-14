@@ -48,7 +48,6 @@
 import { exec } from "@/api/user";
 import store from "@/store";
 import { websocketInit } from "@/utils/websocket";
-import { ca } from "element-plus/es/locale";
 import { Ref, ref } from "vue";
 import { useRoute } from "vue-router";
 import Terminal, { Message } from "vue-web-terminal";

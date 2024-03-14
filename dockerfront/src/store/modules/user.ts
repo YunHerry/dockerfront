@@ -1,14 +1,16 @@
 import { login,getInfo} from "@/api/user";
-import { getToken, setToken } from "@/utils/auth";
+import { getUserInfo,setUserInfo } from "@/utils/auth";
 import { isEmpty } from "@/utils/stringUtils";
 import { ElMessage } from "element-plus";
 import { Commit } from "vuex";
+import store from "..";
 const getDefaultState = () => {
   return {
     user: {
       token: "",
-      name: "",
+      userName: "",
       avatar: "",
+      balance: 0,
     },
   };
 };
@@ -21,18 +23,28 @@ const mutations = {
     state.user.token = token;
   },
   SET_NAME: (state: State, name: string) => {
-    state.user.name = name;
+    state.user.userName = name;
   },
   SET_AVATAR: (state: State, avatar: string) => {
     state.user.avatar = avatar;
   },
+  SET_BALANCE: (state: State, money: number) => {
+    state.user.balance = money;
+  },
 };
 const actions = {
+  setUserInfo({ commit }: { commit: Commit }, user:user) {
+     commit("SET_BALANCE",user.balance);
+     commit("SET_TOKEN",user.token);
+     commit("SET_AVATAR",user.avatar);
+     commit("SET_NAME",user.userName);
+  },
   login({ commit }: { commit: Commit }, userinfo: userInfo) {
     return new Promise<void>((resolve, rject) => {
       login(userinfo)
         .then((res) => {
           const data = res.data || null;
+          console.log(data);
           if (!data) {
             rject("账号或密码错误,请重新输入!");
             ElMessage({
@@ -40,8 +52,8 @@ const actions = {
             })
             return;
           }
-          commit("SET_TOKEN", data.token);
-          setToken(data.token);
+          store.dispatch("user/setUserInfo",data);
+          setUserInfo(data);
           resolve();
         })
         .catch((err) => {
@@ -74,13 +86,11 @@ const actions = {
     });
   },
   loadToken({ commit }: {commit:Commit}) {
-    const token = getToken() || "";
-    console.log(token);
+    const userInfo = getUserInfo();
     return new Promise((resolve, rject) => {
-      if (!isEmpty(token)) {
-        commit("SET_TOKEN", token);
-        setToken(token);
-        resolve(token);
+      if (userInfo) {
+        store.dispatch("user/setUserInfo",userInfo);
+        resolve("profile has been");
       } else {
         rject("token is null");
       }
@@ -89,9 +99,10 @@ const actions = {
 };
 const getters = {
   token: (state: State) => state.user.token,
+  money: (state: State) => state.user.balance,
   avatar: (state: State) => state.user.avatar,
-  name: (state: State) => state.user.name,
-  users: (state: State) => state.user,
+  name: (state: State) => state.user.userName,
+  userInfo: (state: State) => state.user,
 };
 export type State = ReturnType<typeof getDefaultState>;
 export default {

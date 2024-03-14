@@ -22,7 +22,23 @@
           />
         </li>
         <li>
-          <div class="show-window">个人信息</div>
+          <div class="show-window">
+            <div class="user-profile">
+              <div class="username" v-show="userProfile">{{ userProfile?userProfile.userName:"用户" }}</div>
+              <div class="rest-money">
+                <div class="title">钱包金额</div>
+                <div class="money">{{ userProfile?userProfile.balance:0 }}<span class="unit">￥</span></div>
+              </div>
+              <div class="work-btns">
+                <RouterLink to="/dockerManager" class="work-btn">容器列表</RouterLink>
+                <RouterLink to="/userDashboard" class="work-btn">控制台</RouterLink>
+                <RouterLink to="/" class="work-btn">用户资料</RouterLink>
+              </div>
+              <div class="exit-btn">
+                注销
+              </div>
+            </div>
+          </div>
         </li>
       </ul>
     </div>
@@ -74,12 +90,74 @@
   z-index: 10;
   background-color: $white;
   max-height: calc(100vh - 62px);
-  height: 200px;
+  height: 220px;
   width: 400px;
   overflow-y: auto;
   overflow-x: hidden;
   min-width: 140px;
   box-shadow: 0 8px 16px #0000001f;
+  padding: 15px;
+  box-sizing: border-box;
+  .user-profile {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    .username {
+      margin-top: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .rest-money {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 10px 0;
+      .title {
+        color: $gray;
+        font-size: 14px;
+      }
+      .money {
+        font-weight: 700;
+        font-size: 30px;
+        .unit {
+          font-size: 24px;
+        }
+      }
+    }
+    .work-btns {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      justify-content: space-evenly;
+      align-items: center;
+      cursor: pointer;
+      .work-btn {
+        padding: 5px 10px;
+        color: $black;
+        font-style: normal;
+        text-decoration: none;
+      }
+      .work-btn:nth-child(2) {
+        border: solid;
+        border-color: #e9e9e9;
+        border-width: 0 1px;
+        padding: 5px 30px;
+        
+      }
+    }
+    .exit-btn {
+       width: 100%;
+       text-align: center;
+       cursor: pointer;
+       margin-bottom: 10px;
+    }
+  }
 }
 .el-avater {
   float: right;
@@ -133,9 +211,10 @@
 <script lang="ts" setup>
 import Logo from "@/components/Logo.vue";
 import store from "@/store";
-import { isEmpty } from "@/utils/stringUtils";
-import { onMounted, ref } from "vue";
+import { isUserInfoExpire } from "@/utils/auth";
+import { Ref, onMounted, onUpdated, ref } from "vue";
 let userLoginStatus = ref(false);
+const userProfile:Ref<user|null> = ref(null);
 interface props {
   showLogo: boolean;
   showNav: boolean;
@@ -144,7 +223,11 @@ let props = withDefaults(defineProps<props>(), {
   showLogo: true,
   showNav: false,
 });
-onMounted(()=>{
-  userLoginStatus.value = !isEmpty(store.getters["user/token"]);
+onMounted(() => {
+  userLoginStatus.value = !isUserInfoExpire();
+});
+onUpdated(()=>{
+  console.log(store.getters["user/userInfo"])
+  userProfile.value = store.getters["user/userInfo"];
 })
 </script>
