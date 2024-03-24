@@ -18,7 +18,7 @@
         <li>
           <el-avatar
             :size="40"
-            src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+            :src="userProfile?`http://localhost:8888/static/avatar/${store.getters['user/userInfo'].avatar}`:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'"
           />
         </li>
         <li>

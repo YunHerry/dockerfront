@@ -7,6 +7,36 @@
       <el-main class="dashboard-content">
         <div class="user-info card">
           <h3 class="title">用户信息</h3>
+          <el-row>
+            <el-col :span="6">
+              <el-statistic title="支付金额" :value="268500" />
+            </el-col>
+            <el-col :span="6">
+              <el-statistic :value="10">
+                <template #title>
+                  <div style="display: inline-flex; align-items: center">
+                    已完成订单数量
+                    <el-icon style="margin-left: 4px" :size="10">
+                      <Male />
+                    </el-icon>
+                  </div>
+                </template>
+                <template #suffix>/10</template>
+              </el-statistic>
+            </el-col>
+            <el-col :span="6">
+              <el-statistic title="当前服务器总数" :value="9" />
+            </el-col>
+            <el-col :span="6">
+              <el-statistic title="当前订单数" :value="11">
+                <template #suffix>
+                  <el-icon style="vertical-align: -0.125em">
+                    <ChatLineRound />
+                  </el-icon>
+                </template>
+              </el-statistic>
+            </el-col>
+          </el-row>
         </div>
         <div class="user-orders card">
           <h3 class="title">订单中心</h3>
@@ -71,7 +101,13 @@ getOrders({ page: 1, pageSize: 10 }).then((res) => {
   .user-info {
     margin-top: 10px;
     width: 80%;
-    height: 400px;
+    height: 200px;
+    .title {
+      margin-bottom: 40px;
+    }
+    .el-col {
+      text-align: center;
+    }
   }
   .user-orders {
     margin-top: 10px;
@@ -80,14 +116,14 @@ getOrders({ page: 1, pageSize: 10 }).then((res) => {
   }
 }
 .user-dashboard-content {
+  height: 100%;
+  .el-container {
     height: 100%;
-    .el-container {
-        height: 100%;
-    }
+  }
 }
 .card {
-    box-sizing: border-box;
-    padding: 20px;
-    box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.16);
-  }
+  box-sizing: border-box;
+  padding: 20px;
+  box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.16);
+}
 </style>

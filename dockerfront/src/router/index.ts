@@ -5,12 +5,12 @@ import DockerManager from "../views/DockerManager.vue";
 import Order from "../views/order/Order.vue";
 import DefaultOrder from "../views/order/pages/DefaultOrder.vue";
 // import CustomOrder from "../views/order/pages/CustomOrder.vue";
+import UserProfile from "../views/UserProfile.vue";
 import ContainerDashboard from "@/views/ContainerDashboard.vue";
 import UserDashboard from "@/views/UserDashboard.vue";
 import WebShell from "../views/WebShell.vue";
 import { ElMessage } from "element-plus";
 import { h } from "vue";
-import { getToken } from "@/utils/auth";
 import store from "@/store";
 import { isEmpty } from "@/utils/stringUtils";
 const routes: Array<RouteRecordRaw> = [
@@ -89,6 +89,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "webshell",
     component: WebShell,
   },
+  {
+    path: "/userProfile",
+    name: "userProfile",
+    component: UserProfile,
+  }
 ];
 
 const router = createRouter({

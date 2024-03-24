@@ -10,37 +10,44 @@
             <div class="docker-title">容器信息</div>
             <el-skeleton :loading="!containerInfo" :rows="5" animated>
               <template #default>
-                <div class="container-info">ID: {{ containerInfo?.id }}</div>
-                <div class="container-info">内存: {{ containerInfo?.memory }}G</div>
-                <div class="container-info">CPU核心数: {{ containerInfo?.cpuCoreNumber }}h</div>
+                <div class="container-info">
+                  ID: {{ containerInfo?.containerName }}
+                </div>
+                <div class="container-info">
+                  内存: {{ containerInfo?.memory }}G
+                </div>
+                <div class="container-info">
+                  镜像名称: {{ containerInfo?.imageName }}
+                </div>
                 <!-- <span>硬盘: 90 / 100 GB</span> -->
-                <div class="container-info">硬盘: {{ containerInfo?.disk }} GB</div>
-                <div class="container-info">带宽: {{ containerInfo?.networkSpeed }} Mbp</div>
-                <div  class="container-info"
-                  >状态:
-                  <span class="status" :class="status">{{ status }}</span></div
-                >
+                <div class="container-info">
+                  硬盘: {{ containerInfo?.diskPercent }}
+                </div>
+                <!-- <div class="container-info">带宽: {{ containerInfo?. }} Mbp</div> -->
+                <div class="container-info">
+                  状态: <span class="status" :class="status">{{ status }}</span>
+                </div>
               </template>
               <template #template>
-                <div
-                  >ID: <el-skeleton-item variant="span" style="width: 20%"
-                /></div>
-                <div
-                  >内存: <el-skeleton-item variant="span" style="width: 20%"
-                /></div>
-                <div
-                  >CPU核心数:
-                  <el-skeleton-item variant="span" style="width: 20%"
-                /></div>
-                <div
-                  >硬盘: <el-skeleton-item variant="span" style="width: 20%"
-                /></div>
-                <div
-                  >带宽: <el-skeleton-item variant="span" style="width: 20%"
-                /></div>
-                <div
-                  >状态: <el-skeleton-item variant="span" style="width: 20%"
-                /></div>
+                <div>
+                  ID: <el-skeleton-item variant="span" style="width: 20%" />
+                </div>
+                <div>
+                  内存: <el-skeleton-item variant="span" style="width: 20%" />
+                </div>
+                <div>
+                  CPU核心数:
+                  <el-skeleton-item variant="span" style="width: 20%" />
+                </div>
+                <div>
+                  硬盘: <el-skeleton-item variant="span" style="width: 20%" />
+                </div>
+                <div>
+                  带宽: <el-skeleton-item variant="span" style="width: 20%" />
+                </div>
+                <div>
+                  状态: <el-skeleton-item variant="span" style="width: 20%" />
+                </div>
               </template>
             </el-skeleton>
           </div>
@@ -67,6 +74,13 @@
               </div>
               <div
                 v-show="isShow(continerWorkStatus.RESTART)"
+                @click="showUploadDialog"
+              >
+                <i class="iconfont icon-redo"></i>
+                上传
+              </div>
+              <div
+                v-show="isShow(continerWorkStatus.RESTART)"
                 @click="controlContiner(continerWorkStatus.RESTART)"
               >
                 <i class="iconfont icon-redo"></i>
@@ -82,6 +96,22 @@
             <div id="memory"></div>
           </div>
         </div>
+        <el-dialog v-model="isDialogshow" title="Tips" width="500">
+          <el-tree
+            style="max-width: 600px"
+            :props="defaultProps"
+            :data="data"
+            lazy
+          />
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button @click="isDialogshow = false">Cancel</el-button>
+              <el-button type="primary" @click="isDialogshow = false">
+                Confirm
+              </el-button>
+            </div>
+          </template>
+        </el-dialog>
       </el-main>
     </el-container>
   </div>
@@ -90,7 +120,11 @@
 import UserTop from "@/components/user/UserTop.vue";
 import { Ref, getCurrentInstance, onMounted, onUnmounted, ref } from "vue";
 import { ECharts, EChartsOption, init, SeriesOption, throttle } from "echarts";
-import { changeContainerStatus, getContainerInfo } from "@/api/user";
+import {
+  changeContainerStatus,
+  getContainerInfo,
+  getContainerDataList,
+} from "@/api/user";
 import { continerWorkStatus, continerStatus } from "@/constant";
 import { useRoute } from "vue-router";
 import store from "@/store";
@@ -102,6 +136,7 @@ const id = route.params.id as string;
 console.log(store.getters["user/token"]);
 const status: Ref<continerStatus> = ref(continerStatus.RUNNING);
 const containerInfo: Ref<containerInfo | null> = ref(null);
+const isDialogshow: Ref<boolean> = ref(false);
 //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA4NjgwNTYwLCJhY2NvdW50IjoiMTAwMCJ9.0y_UCswaMvXo-Yqyq1geJ-nuoz7F8caU6wbxVNIH0mI/988d0a632f8c98fa8d46678e08850874e719a40d37b6f3b28ab8e189295c1fc4
 /**
  * {
@@ -229,7 +264,7 @@ const client = websocketInit(
   (client) => {
     client.send("current");
   },
-  ()=>isRuning(status.value)
+  () => isRuning(status.value)
 );
 const statusClient = websocketInit(
   `ws://localhost:8888/ibs/api/socket/dashboard/${store.getters["user/token"]}/${id}`,
@@ -244,7 +279,7 @@ const statusClient = websocketInit(
   (client) => {
     client.send("status");
   },
-  ()=>isRuning(status.value)
+  () => isRuning(status.value)
 );
 onUnmounted(() => {
   client.close();
@@ -274,6 +309,7 @@ onMounted(() => {
   getContainerInfo(id).then((res) => {
     // const target = getCurrentInstance();
     containerInfo.value = res.data;
+    status.value = containerInfo.value.containerStatus;
     cpuDiagramUpdate = initDiagram(
       document.getElementById("cpu"),
       cpuOption,
@@ -297,6 +333,21 @@ function controlContiner(status: continerWorkStatus) {
       type: "success",
       message: "修改状态成功",
     });
+  });
+}
+const defaultProps = {
+  children: 'treeNodeList',
+  label: 'name',
+}
+const data: Ref<Array<any>> = ref([]);
+const nowUrl = "/";
+function showUploadDialog() {
+  
+  getContainerDataList(id, nowUrl).then(res=>{
+    isDialogshow.value = true;
+    res.data.treeNodeList.forEach(element=>{
+        data.value.push(element);
+    })
   });
 }
 </script>
@@ -350,7 +401,8 @@ function controlContiner(status: continerWorkStatus) {
       // 去除第3n个的margin-right
       margin-right: 0;
     }
-    & .container-info,& .el-skeleton > div {
+    & .container-info,
+    & .el-skeleton > div {
       color: $gray;
       margin-top: 10px;
     }

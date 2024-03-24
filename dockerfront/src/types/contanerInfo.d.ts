@@ -1,11 +1,8 @@
 declare interface containerInfo {
-  createdAt: string;
-  updatedAt: string;
-  id: number;
+  containerName: string;
+  containerStatus: continerStatus;
   cpuType: string;
-  cpuCoreNumber: number;
-  networkSpeed: number;
-  disk: number;
-  memory: number;
-  money: number;
+  diskPercent: string;
+  imageName: string;
+  memory: string;
 }

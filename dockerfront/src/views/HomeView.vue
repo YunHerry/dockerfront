@@ -88,6 +88,7 @@ import beianFooter from "/src/components/beianFooter.vue";
     text-align: center;
     .title,
     .name {
+      text-align: center;
       font-weight: bold;
       color: $black;
     }

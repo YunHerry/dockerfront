@@ -104,8 +104,14 @@ export function changeContainerStatus(id: string, status: continerWorkStatus) {
 }
 export function getContainerInfo(containerId:string): Promise<requestResponse<containerInfo>> {
   return request({
-    url: `/ibs/api/hardware/get/${containerId}`,
+    url: `/ibs/api/mix/get/${containerId}`,
     method: "GET",
+  });
+}
+export function getContainerDataList(containerId:string,targetPath:string = "/"): Promise<requestResponse<containerFileList>> {
+  return request({
+    url: `/ibs/api/containers/get/file?containerId=${containerId}&targetPath=${targetPath}`,
+    method: "POST",
   });
 }
 export function exec(
