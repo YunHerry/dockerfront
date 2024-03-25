@@ -1,5 +1,5 @@
 import { login,getInfo} from "@/api/user";
-import { getUserInfo,setUserInfo } from "@/utils/auth";
+import { getUserInfo,setUserInfo,clearUserInfo } from "@/utils/auth";
 import { isEmpty } from "@/utils/stringUtils";
 import { ElMessage } from "element-plus";
 import { Commit } from "vuex";
@@ -94,6 +94,16 @@ const actions = {
       } else {
         rject("token is null");
       }
+    });
+  },
+  logout({ commit }: { commit: Commit }) {
+      return new Promise<void>((resolve) => {
+        // Clear user info from cookies or local storage
+        clearUserInfo(); // Assuming setUserInfo(null) clears the user info
+        // Reset state to default
+        commit("RESET_STATE");
+        resolve();
+        window.location.reload();
     });
   },
 };

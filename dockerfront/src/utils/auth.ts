@@ -25,6 +25,9 @@ export function getUserInfo():user {
   const userInfo = Cookie.get(USER_TOKEN);
   return userInfo?JSON.parse(userInfo):null;
 }
+export function clearUserInfo():void{
+  Cookie.remove(USER_TOKEN);
+}
 export function isUserInfoExpire() {
   return !Cookie.get(USER_TOKEN);
 }

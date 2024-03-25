@@ -34,7 +34,7 @@
                 <RouterLink to="/userDashboard" class="work-btn">控制台</RouterLink>
                 <RouterLink to="/" class="work-btn">用户资料</RouterLink>
               </div>
-              <div class="exit-btn">
+              <div class="exit-btn"  @click="logout">
                 注销
               </div>
             </div>
@@ -148,7 +148,7 @@
         border-color: #e9e9e9;
         border-width: 0 1px;
         padding: 5px 30px;
-        
+
       }
     }
     .exit-btn {
@@ -230,4 +230,16 @@ onUpdated(()=>{
   console.log(store.getters["user/userInfo"])
   userProfile.value = store.getters["user/userInfo"];
 })
+function logout() {
+  store
+    .dispatch("user/logout")
+    .then(() => {
+      // Clear user info and navigate to login page
+      // router.push("/login");
+      ElMessage.success("注销成功");
+    })
+    .catch((error) => {
+      ElMessage.error("注销失败: " + error);
+    });
+}
 </script>
