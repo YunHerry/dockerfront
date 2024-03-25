@@ -3,4 +3,5 @@ declare interface containerFileListNode {
   absolutePath: string;
   type: string;
   treeNodeList: Array;
+  leaf: boolean;
 }

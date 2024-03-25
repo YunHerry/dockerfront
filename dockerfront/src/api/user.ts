@@ -114,6 +114,16 @@ export function getContainerDataList(containerId:string,targetPath:string = "/")
     method: "POST",
   });
 }
+export function download(containerId:string,targetPath:string): Promise<requestResponse<any>> {
+  return request({
+    url: `/ibs/api/containers/download`,
+    method: "POST",
+    data: {
+      containerId,
+      targetPath
+    }
+  });
+}
 export function exec(
   id: string,
   command: string,

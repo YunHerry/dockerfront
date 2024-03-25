@@ -100,9 +100,20 @@
           <el-tree
             style="max-width: 600px"
             :props="defaultProps"
-            :data="data"
+            :load="loadNode"
             lazy
-          />
+          >
+          <template #default="{ node, data }">
+        <span class="custom-tree-node">
+          <span>{{ node.label }}</span>
+          <span>
+            <a v-if="data.type != '/'" class="download-btn">下载</a>
+            
+          </span>
+        </span>
+      </template>
+        </el-tree>
+
           <template #footer>
             <div class="dialog-footer">
               <el-button @click="isDialogshow = false">Cancel</el-button>
@@ -131,6 +142,7 @@ import store from "@/store";
 import { IMessageEvent, w3cwebsocket } from "websocket";
 import { ElMessage } from "element-plus";
 import { websocketInit } from "@/utils/websocket";
+import type Node from "element-plus/es/components/tree/src/model/node";
 const route = useRoute();
 const id = route.params.id as string;
 console.log(store.getters["user/token"]);
@@ -336,19 +348,41 @@ function controlContiner(status: continerWorkStatus) {
   });
 }
 const defaultProps = {
-  children: 'treeNodeList',
-  label: 'name',
-}
+  children: "treeNodeList",
+  label: "name",
+  isLeaf: "leaf"
+};
 const data: Ref<Array<any>> = ref([]);
 const nowUrl = "/";
 function showUploadDialog() {
-  
-  getContainerDataList(id, nowUrl).then(res=>{
+  getContainerDataList(id, nowUrl).then((res) => {
     isDialogshow.value = true;
-    res.data.treeNodeList.forEach(element=>{
-        data.value.push(element);
-    })
+    res.data.treeNodeList.forEach((element) => {
+      data.value.push(element);
+    });
   });
+}
+function loadNode(node: Node, resolve: (data: Array<any>) => void) {
+  if (node.level === 0) {
+    return resolve([{ name: "/", absolutePath: "/",type: "/"}]);
+  }
+  let nodeParent = node;
+  let url = "";
+  console.log(nodeParent);
+  do {
+    console.log(nodeParent.data.absolutePath);
+    url = nodeParent.data.absolutePath + url;
+    nodeParent = nodeParent.parent;
+  } while(nodeParent?.data.absolutePath);
+  getContainerDataList(id,url).then((res) => {
+    return resolve(res.data.treeNodeList.map((element)=>{
+      element.leaf = element.type != "/";
+      return element;
+    }));
+  });
+};
+function downloadFile() {
+  
 }
 </script>
 <!-- websocket close -->
@@ -458,5 +492,9 @@ function showUploadDialog() {
   align-items: center;
   padding: 0 20px !important;
   justify-content: space-between;
+}
+.download-btn {
+  margin-left: 10px;
+  color: $blue;
 }
 </style>
