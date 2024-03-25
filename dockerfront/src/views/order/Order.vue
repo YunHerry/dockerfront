@@ -47,6 +47,8 @@
 import { Ref, onMounted, ref ,reactive} from "vue";
 import { getPacket, getImages,createOrder } from "@/api/user";
 import { orderPage } from "./pages/DefaultOrder.vue";
+import { useRoute } from "vue-router";
+const route = useRoute();
 let bandwidth = ref(0);
 let worthy = ref();
 let amount = ref(1);
@@ -60,6 +62,7 @@ function submit(e:MouseEvent) {
   console.log(packetId,orderConfig)
   createOrder(packetId, orderConfig).then((res) => {
     console.log("创建订单成功!");
+    route.push("/userDashboard");
   });
 }
 </script>

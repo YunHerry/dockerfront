@@ -64,9 +64,11 @@
                 <!-- <RouterLink :to="'/webshell/1111111111111'">
                   <el-button size="small" @click="">编辑参数</el-button>
                 </RouterLink> -->
-                <RouterLink :to="'/dashboard/' + scope.row.id">
-                  <el-button size="small" @click="">仪表盘</el-button>
+                <RouterLink :to="'/containerDashboard/' + scope.row.containerId">
+                  <el-button v-if="scope.row.state === '创建成功!'" size="small" @click="">仪表盘</el-button>
                 </RouterLink>
+                <el-button size="small" v-if="scope.row.state === '未支付'" @click="pay(scope.row.id)">支付</el-button>
+
                 <RouterLink
                   :to="'/webshell/' + scope.row.id"
                   v-show="scope.row.state == 1"
@@ -83,13 +85,21 @@
 </template>
 <script lang="ts" setup>
 import UserTop from "@/components/user/UserTop.vue";
-import { getOrders } from "@/api/user";
+import { getOrders,payOrder } from "@/api/user";
 import { Ref, ref } from "vue";
 const userOrders: Ref<Array<order>> = ref([]);
 getOrders({ page: 1, pageSize: 10 }).then((res) => {
   userOrders.value = [];
   userOrders.value.push(...res.data);
 });
+// Define pay function
+function pay(orderId: string) {
+  payOrder(orderId).then((res) => {
+    console.log('Payment successful');
+  }).catch((error) => {
+    console.error('Payment failed:', error);
+  });
+}
 </script>
 <style lang="scss" scoped>
 .dashboard-content {
