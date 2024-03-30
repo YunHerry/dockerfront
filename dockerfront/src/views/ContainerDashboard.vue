@@ -74,7 +74,7 @@
               </div>
               <div
                 v-show="isShow(continerWorkStatus.RESTART)"
-                @click="showUploadDialog"
+                @click="showFileTreeDialog"
               >
                 <i class="iconfont icon-redo"></i>
                 上传
@@ -96,29 +96,65 @@
             <div id="memory"></div>
           </div>
         </div>
-        <el-dialog v-model="isDialogshow" title="Tips" width="500">
+        <el-dialog v-model="isFileTreeDialogShow" title="Tips" width="500">
           <el-tree
             style="max-width: 600px"
             :props="defaultProps"
             :load="loadNode"
             lazy
           >
-          <template #default="{ node, data }">
-        <span class="custom-tree-node">
-          <span>{{ node.label }}</span>
-          <span>
-            <a v-if="data.type != '/'" class="download-btn">下载</a>
-            
-          </span>
-        </span>
-      </template>
-        </el-tree>
+            <template #default="{ node, data }">
+              <span class="custom-tree-node">
+                <span>{{ node.label }}</span>
+                <span v-if="data.type != '/'"
+                @click.stop="downloadFile(getFullPath(node),data.name)"
+                >
+                  <a class="download-btn">下载</a>
+                </span>
+                <span v-else="data.type != '/'" @click.stop="showUploadDialog(getFullPath(node))">
+                  <a class="download-btn">上传</a>
+                </span>
+              </span>
+            </template>
+          </el-tree>
 
           <template #footer>
             <div class="dialog-footer">
-              <el-button @click="isDialogshow = false">Cancel</el-button>
-              <el-button type="primary" @click="isDialogshow = false">
+              <el-button @click="isFileTreeDialogShow = false"
+                >Cancel</el-button
+              >
+              <el-button type="primary" @click="isFileTreeDialogShow = false">
                 Confirm
+              </el-button>
+            </div>
+          </template>
+        </el-dialog>
+        <el-dialog v-model="isUploadDialogShow" title="Tips" width="500">
+          <el-upload
+            drag
+            action="http://localhost:8888/ibs/api/containers/upload"
+            multiple
+            :headers="{ Authorization: store.getters['user/token'] }"
+            :data="{
+              containerId: id,
+              tagetPath: uploadUrl
+            }"
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">
+              Drop file here or <em>click to upload</em>
+            </div>
+            <template #tip>
+              <div class="el-upload__tip">
+                jpg/png files with a size less than 500kb
+              </div>
+            </template>
+          </el-upload>
+          <template #footer>
+            <div class="dialog-footer">
+              <!-- <el-button @click="isUploadDialogShow = false"></el-button> -->
+              <el-button type="primary" @click="isUploadDialogShow = false">
+                完成
               </el-button>
             </div>
           </template>
@@ -135,11 +171,13 @@ import {
   changeContainerStatus,
   getContainerInfo,
   getContainerDataList,
+  moveFiletoDownloadSpace,
+  download,
 } from "@/api/user";
 import { continerWorkStatus, continerStatus } from "@/constant";
 import { useRoute } from "vue-router";
 import store from "@/store";
-import { IMessageEvent, w3cwebsocket } from "websocket";
+import { IMessageEvent,request, w3cwebsocket } from "websocket";
 import { ElMessage } from "element-plus";
 import { websocketInit } from "@/utils/websocket";
 import type Node from "element-plus/es/components/tree/src/model/node";
@@ -148,7 +186,9 @@ const id = route.params.id as string;
 console.log(store.getters["user/token"]);
 const status: Ref<continerStatus> = ref(continerStatus.RUNNING);
 const containerInfo: Ref<containerInfo | null> = ref(null);
-const isDialogshow: Ref<boolean> = ref(false);
+const isFileTreeDialogShow: Ref<boolean> = ref(false);
+const isUploadDialogShow: Ref<boolean> = ref(false);
+let uploadUrl:string = "";
 //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA4NjgwNTYwLCJhY2NvdW50IjoiMTAwMCJ9.0y_UCswaMvXo-Yqyq1geJ-nuoz7F8caU6wbxVNIH0mI/988d0a632f8c98fa8d46678e08850874e719a40d37b6f3b28ab8e189295c1fc4
 /**
  * {
@@ -350,13 +390,13 @@ function controlContiner(status: continerWorkStatus) {
 const defaultProps = {
   children: "treeNodeList",
   label: "name",
-  isLeaf: "leaf"
+  isLeaf: "leaf",
 };
 const data: Ref<Array<any>> = ref([]);
 const nowUrl = "/";
-function showUploadDialog() {
+function showFileTreeDialog() {
   getContainerDataList(id, nowUrl).then((res) => {
-    isDialogshow.value = true;
+    isFileTreeDialogShow.value = true;
     res.data.treeNodeList.forEach((element) => {
       data.value.push(element);
     });
@@ -364,25 +404,42 @@ function showUploadDialog() {
 }
 function loadNode(node: Node, resolve: (data: Array<any>) => void) {
   if (node.level === 0) {
-    return resolve([{ name: "/", absolutePath: "/",type: "/"}]);
+    return resolve([{ name: "/", absolutePath: "/", type: "/" }]);
   }
+  getContainerDataList(id, getFullPath(node)).then((res) => {
+    return resolve(
+      res.data.treeNodeList.map((element) => {
+        element.leaf = element.type != "/";
+        return element;
+      })
+    );
+  });
+}
+function getFullPath(node: Node) {
   let nodeParent = node;
   let url = "";
-  console.log(nodeParent);
   do {
     console.log(nodeParent.data.absolutePath);
     url = nodeParent.data.absolutePath + url;
     nodeParent = nodeParent.parent;
-  } while(nodeParent?.data.absolutePath);
-  getContainerDataList(id,url).then((res) => {
-    return resolve(res.data.treeNodeList.map((element)=>{
-      element.leaf = element.type != "/";
-      return element;
-    }));
-  });
-};
-function downloadFile() {
-  
+  } while (nodeParent?.data.absolutePath);
+  return url.replaceAll("//", "/");
+}
+function downloadFile(targetPath: string,targetName:string) {
+  moveFiletoDownloadSpace(id, targetPath).then((res) =>
+    download(id, store.getters["user/name"], targetPath).then((res) => {
+      const dom = document.createElement("a");
+      dom.href = URL.createObjectURL(res);
+      dom.setAttribute('download', targetName);
+      console.log(dom.href);
+      dom.click();
+      dom.remove();
+    })
+  );
+}
+function showUploadDialog(url:string) {
+   isUploadDialogShow.value = true;
+   uploadUrl = url;
 }
 </script>
 <!-- websocket close -->

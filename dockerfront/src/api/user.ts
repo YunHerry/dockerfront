@@ -114,7 +114,25 @@ export function getContainerDataList(containerId:string,targetPath:string = "/")
     method: "POST",
   });
 }
-export function download(containerId:string,targetPath:string): Promise<requestResponse<any>> {
+export function moveFiletoDownloadSpace(containerId:string,targetPath:string): Promise<requestResponse<any>> {
+  return request({
+    url: `/ibs/api/containers/download`,
+    method: "POST",
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    data: {
+      containerId,
+      targetPath
+    }
+  });
+}
+export function download(containerId:string,username:string,targetPath:string): Promise<any> {
+  return request({
+    url: `http://localhost:8888/static/${username}/container/${containerId}${targetPath}`,
+    method: "GET",
+    responseType: "blob"
+  });
+}
+export function upload(containerId:string,targetPath:string): Promise<requestResponse<any>> {
   return request({
     url: `/ibs/api/containers/download`,
     method: "POST",

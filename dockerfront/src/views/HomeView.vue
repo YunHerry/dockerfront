@@ -2,7 +2,7 @@
   <div class="home">
     <el-container>
         <el-header>
-          <UserTop :show-logo="true" :show-nav="true"></UserTop>
+          <UserTop :show-left="true" :show-logo="true" :show-nav="true"></UserTop>
         </el-header>
       <el-main>
         <el-carousel height="500px">
