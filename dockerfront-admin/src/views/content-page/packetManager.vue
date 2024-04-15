@@ -8,7 +8,7 @@
         <el-table-column prop="hardwareId" label="硬件id" width="180" />
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button size="small" @click="">修改</el-button>
+            <el-button size="small" @click="editPacket(scope.row)">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -20,9 +20,11 @@
 import { getPacket } from "@/api/admin";
 import UserTop from "@/components/user/UserTop.vue";
 import { Ref, onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { ElTable, ElTableColumn, ElInput, ElButton } from "element-plus";
 const input = ref("");
+const router = useRouter();
+
 let page = 1;
 let number = 10;
 
@@ -39,6 +41,10 @@ function search(value: string) {
   dataFilters.filter((item, index) => {
     return item.name == value;
   });
+}
+function editPacket(packet) {
+     console.log(packet);
+     router.push({ name: 'addPacket', params: { packetConfig: packet } });
 }
 
 onMounted(() => {

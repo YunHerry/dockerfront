@@ -1,20 +1,20 @@
 import { continerStatus } from "@/constant";
 import request from "@/utils/request";
 import axios, { AxiosResponse } from "axios";
-export function login(data: userInfo): Promise<requestResponse<string>> {
+export function login(data: userInfo): Promise<requestResponse<user>> {
   return request({
     url: "/ibs/api/verify/login",
-    method: "post",
+    method: "POST",
     data: {
       account: data.username,
       pwd: data.password,
     },
   });
 }
-export function register(data: userInfo): Promise<requestResponse<userInfo>>  {
+export function register(data: userInfo) {
   return request({
     url: "/ibs/api/verify/register",
-    method: "post",
+    method: "POST",
     data: {
       account: data.username,
       pwd: data.password,
@@ -24,13 +24,13 @@ export function register(data: userInfo): Promise<requestResponse<userInfo>>  {
 export function logout() {
   return request({
     url: "/ibs/user/logout",
-    method: "post",
+    method: "POST",
   });
 }
 export function getInfo() {
   return request({
     url: "/ibs/api/user/",
-    method: "get",
+    method: "GET",
   });
 }
 export function getContiners(nowPage:number=0,size:number=10) {

@@ -1,5 +1,6 @@
 declare interface user {
     token:string;
-    name:string;
+    userName:string;
     avatar:string;
+    balance: number;
 }

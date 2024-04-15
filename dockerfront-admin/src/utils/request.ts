@@ -1,9 +1,9 @@
+import store from "@/store";
 import axios from "axios";
 import router from "@/router/index"
 import { isEmpty } from "./stringUtils";
 import { ElMessage } from "element-plus";
-import store from "@/store";
-import { getToken } from "./auth";
+import { getUserInfo } from "@/utils/auth";
 const service = axios.create({
   baseURL: "http://localhost:8888",
   withCredentials: false,
@@ -12,14 +12,13 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     //假设store拥有token
-    console.log(!isEmpty(store.getters["user/token"]));
     if (!isEmpty(store.getters["user/token"])) {
-      config.headers["Authorization"] = store.getters["user/token"]; 
+      config.headers["Authorization"] = getUserInfo().token;
     }
     return config;
   },
   error => {
-    console.log(error)
+    ElMessage.warning("服务器在忙,请稍后再试");
     return Promise.reject(error)
   }
 )
@@ -36,12 +35,11 @@ enum requestResult {
 service.interceptors.response.use(
   response => {
     const res = response.data;
-    console.log(res);
     const code = parseInt((parseInt(res.code) / 100).toFixed());
     if(code != requestResult.SUCCESS) {
       ElMessage(
         {
-          message: "发生了一些错误,请稍后再试",
+          message: res.message,
           type: "warning"
         }
       )
@@ -49,7 +47,7 @@ service.interceptors.response.use(
     return res;
   },
   error => {
-    console.error("error: \n" + error);
+    ElMessage.warning("服务器在忙,请稍后再试");
     return Promise.reject(error)
   }
 )
