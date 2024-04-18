@@ -1,4 +1,5 @@
-import { continerStatus } from "./modules/continerStatus"
+import { continerWorkStatus,continerStatus } from "./modules/continer"
 export {
+    continerWorkStatus,
     continerStatus
 }

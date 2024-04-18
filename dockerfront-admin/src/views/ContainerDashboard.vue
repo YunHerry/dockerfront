@@ -173,7 +173,7 @@ import {
   getContainerDataList,
   moveFiletoDownloadSpace,
   download,
-} from "@/api/user";
+} from "@/api/admin";
 import { continerWorkStatus, continerStatus } from "@/constant";
 import { useRoute } from "vue-router";
 import store from "@/store";

@@ -9,6 +9,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import store from "@/store";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 const route = useRoute();

@@ -2,7 +2,8 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import IndexView from "@/views/IndexView.vue";
 import LoginView from "../views/login/LoginView.vue";
 import AddPacket from "../views/AddPacket.vue"
-import Dashboard from "@/views/Dashboard.vue";
+import ContainerDashboard from "@/views/ContainerDashboard.vue";
+import UserDashboard from "@/views/UserDashboard.vue";
 import WebShell from "@/views/WebShell.vue";
 import store from "@/store";
 import { isEmpty } from "@/utils/stringUtils";
@@ -32,18 +33,7 @@ const routes: Array<RouteRecordRaw> = [
         path: "variety",
         name: "variety",
         component: () => import("../views/login/pages/VarietyView.vue"),
-      },
-      {
-        path: "registerAccount",
-        name: "registerAccount",
-        component: () => import("../views/login/pages/RegisterAccountView.vue"),
-      },
-      {
-        path: "registerPassword",
-        name: "registerPassword",
-        component: () =>
-          import("../views/login/pages/RegisterPasswordView.vue"),
-      },
+      }
     ],
   },
   {
@@ -52,10 +42,15 @@ const routes: Array<RouteRecordRaw> = [
       component: AddPacket,
   },
   {
-    path: "/dashboard/:id",
-    name: "dashboard",
-    component: Dashboard,
+    path: "/containerDashboard/:id",
+    name: "containerDashboard",
+    component: ContainerDashboard,
   },
+  // {
+  //   path: "/userDashboard/",
+  //   name: "userDashboard",
+  //   component: UserDashboard,
+  // },
   {
     path: "/webshell/:id",
     name: "webshell",
@@ -67,11 +62,12 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
-const filterRouter = ["account","password","registerAccount","registerPassword"];
+const filterRouter = ["account","password"];
 router.beforeEach((to, from, next) => {
   console.log(to);
   for (const filter of filterRouter) {
     if (filter == to.name) {
+      console.log("进入");
       return next();
     }
   }

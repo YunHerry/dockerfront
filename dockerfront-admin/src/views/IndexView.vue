@@ -22,7 +22,7 @@
 .button {
   height: 60px;
   box-sizing: border-box;
-  padding: 20px 0;
+  padding: 20px 40px;
   font-weight: bold;
   font-size: 18px;
   cursor: pointer;
@@ -84,14 +84,14 @@
 </style>
 <script lang="ts" setup>
 import userTop from "@/components/user/UserTop.vue";
-import containersManager from "./content-page/containersManager.vue";
+import UserDashboard from "./content-page/UserDashboard.vue";
 import OrderManager from "./content-page/orderManager.vue";
 import Other from "./content-page/other.vue";
 import PacketManager from "./content-page/packetManager.vue";
 import { DefineComponent, Ref, reactive, ref, markRaw } from "vue";
 type views = Record<string, DefineComponent<any, any, any>>;
 const components: views = {
-  "容器管理": markRaw(containersManager),
+  "容器管理": markRaw(UserDashboard),
   "订单管理": markRaw(OrderManager),
   "其他": markRaw(Other),
   "套餐管理": markRaw(PacketManager),
@@ -100,7 +100,7 @@ const menus: string[] = [];
 for (let menuName in components) {
   menus.push(menuName);
 }
-let currentView: Ref<any> = ref(containersManager);
+let currentView: Ref<any> = ref(UserDashboard);
 let nowViewIndex = ref(0);
 function clickItem(item: string,index: number) {
   currentView.value = components[item];
