@@ -1,4 +1,4 @@
-import { continerStatus } from "@/constant";
+import { continerStatus, continerWorkStatus } from "@/constant";
 import request from "@/utils/request";
 import axios, { AxiosResponse } from "axios";
 export function login(data: userInfo): Promise<requestResponse<user>> {
@@ -33,25 +33,25 @@ export function getInfo() {
     method: "GET",
   });
 }
-export function getContiners(nowPage:number=0,size:number=10) {
+export function getContainers(nowPage:number=1,size:number=5) {
   return request({
     url: `/ibs/api/admin/containers/${nowPage}/${size}`,
     method: "get",
   });
 }
-export function changeContainerStatus(id: string, status: continerStatus) {
-  return request.request({
-    url: `/ibs/api/admin/container/${id}/${status}`,
-    method: "get",
+export function changeContainerStatus(id: string, status: continerWorkStatus) {
+  return request({
+    url: `/ibs/api/containers/${id}/${status}`,
+    method: "POST",
   });
 }
-export function createContainer(id: string, dockerConfig: containerConfig) {
-  return request.request({
-    url: `/ibs/api/admin/containers/create`,
-    method: "get",
-    data: dockerConfig,
-  });
-}
+// export function createContainer(id: string, dockerConfig: containerConfig) {
+//   return request.request({
+//     url: `/ibs/api/admin/containers/create`,
+//     method: "get",
+//     data: dockerConfig,
+//   });
+// }
 export function selectContainers(
   page: number,
   pageSize: number,
@@ -63,22 +63,62 @@ export function selectContainers(
     data: selectParam || null,
   });
 }
-export function createPacket(packetConfig: packetConfig) {
-  return request.request({
-    url: "/ibs/api/packet/create",
-    method: "post",
-    data: packetConfig,
-  });
-}
-export function getPacket(
-  pageParam?: pageParam
-): Promise<requestResponse<Array<packet>>> {
+export function getContainerInfo(containerId:string): Promise<requestResponse<containerInfo>> {
   return request({
-    url: "/ibs/api/packet",
+    url: `/ibs/api/mix/get/${containerId}`,
     method: "GET",
-    params: pageParam,
   });
 }
+export function getContainerDataList(containerId:string,targetPath:string = "/"): Promise<requestResponse<containerFileList>> {
+  return request({
+    url: `/ibs/api/containers/get/file?containerId=${containerId}&targetPath=${targetPath}`,
+    method: "POST",
+  });
+}
+export function moveFiletoDownloadSpace(containerId:string,targetPath:string): Promise<requestResponse<any>> {
+  return request({
+    url: `/ibs/api/containers/download`,
+    method: "POST",
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    data: {
+      containerId,
+      targetPath
+    }
+  });
+}
+export function download(containerId:string,username:string,targetPath:string): Promise<any> {
+  return request({
+    url: `http://localhost:8888/static/${username}/container/${containerId}${targetPath}`,
+    method: "GET",
+    responseType: "blob"
+  });
+}
+export function upload(containerId:string,targetPath:string): Promise<requestResponse<any>> {
+  return request({
+    url: `/ibs/api/containers/download`,
+    method: "POST",
+    data: {
+      containerId,
+      targetPath
+    }
+  });
+}
+// export function createPacket(packetConfig: packetConfig) {
+//   return request.request({
+//     url: "/ibs/api/packet/create",
+//     method: "post",
+//     data: packetConfig,
+//   });
+// }
+// export function getPacket(
+//   pageParam?: pageParam
+// ): Promise<requestResponse<Array<packet>>> {
+//   return request({
+//     url: "/ibs/api/packet",
+//     method: "GET",
+//     params: pageParam,
+//   });
+// }
 export function exec(
   id: string,
   command: string,
