@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import IndexView from "@/views/IndexView.vue";
 import LoginView from "../views/login/LoginView.vue";
-import AddPacket from "../views/AddPacket.vue"
+import AddPacket from "../views/addPacket.vue"
 import ContainerDashboard from "@/views/ContainerDashboard.vue";
 import UserDashboard from "@/views/UserDashboard.vue";
 import WebShell from "@/views/WebShell.vue";

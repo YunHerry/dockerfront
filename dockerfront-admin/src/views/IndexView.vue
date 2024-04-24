@@ -86,6 +86,7 @@
 import userTop from "@/components/user/UserTop.vue";
 import UserDashboard from "./content-page/UserDashboard.vue";
 import OrderManager from "./content-page/orderManager.vue";
+import ImageManager from "./content-page/ImageManager.vue";
 import Other from "./content-page/other.vue";
 import PacketManager from "./content-page/packetManager.vue";
 import { DefineComponent, Ref, reactive, ref, markRaw } from "vue";
@@ -93,6 +94,7 @@ type views = Record<string, DefineComponent<any, any, any>>;
 const components: views = {
   "容器管理": markRaw(UserDashboard),
   "订单管理": markRaw(OrderManager),
+  "镜像管理": markRaw(ImageManager),
   "其他": markRaw(Other),
   "套餐管理": markRaw(PacketManager),
 };

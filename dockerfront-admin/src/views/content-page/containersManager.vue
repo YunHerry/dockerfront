@@ -32,7 +32,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { getContiners, selectContainers } from "@/api/admin";
+import { getContainers, selectContainers } from "@/api/admin";
 import Logo from "@/components/Logo.vue";
 import { Ref, onMounted, ref } from "vue";
 import { ElTable, ElTableColumn, ElInput, ElButton } from "element-plus";
