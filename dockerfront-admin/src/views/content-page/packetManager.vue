@@ -1,18 +1,34 @@
 <template>
   <div class="packets-content">
     <i class="title">套餐管理</i>
-    <div class="packets-table">
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="name" label="名称/ID" width="180" />
-        <el-table-column prop="description" label="描述" width="180" />
-        <el-table-column prop="hardwareId" label="硬件id" width="180" />
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button size="small" @click="editPacket(scope.row)">修改</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+    <div class="dockers-table">
+          <el-button @click="toAddPacket">新增套餐</el-button>
+          <el-table :data="tableData" style="width: 100%">
+            <el-table-column prop="name" label="名称/ID" width="180" />
+            <el-table-column prop="description" label="描述" width="180" />
+            <el-table-column width="180">
+              <template #header>
+                <el-input
+                  v-model="input"
+                  size="small"
+                  placeholder="关键字检索"
+                  @change="search"
+                  clearable
+                />
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template #default="scope">
+                <RouterLink :to="'/webshell/' + scope.row.id">
+                  <el-button size="small" @click="">查看</el-button>
+                </RouterLink>
+                <RouterLink :to="'/dashboard/' + scope.row.id">
+                  <el-button size="small" @click="">修改</el-button>
+                </RouterLink>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
   </div>
 </template>
 
@@ -46,7 +62,6 @@ function editPacket(packet) {
      console.log(packet);
      router.push({ name: 'addPacket', params: { packetConfig: packet } });
 }
-
 onMounted(() => {
   getPacket({ page: 1, pageSize: 5 }).then((res) => {
     tableData.value.push(...res.data);

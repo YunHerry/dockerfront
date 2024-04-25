@@ -110,15 +110,15 @@ export function upload(containerId:string,targetPath:string): Promise<requestRes
 //     data: packetConfig,
 //   });
 // }
-// export function getPacket(
-//   pageParam?: pageParam
-// ): Promise<requestResponse<Array<packet>>> {
-//   return request({
-//     url: "/ibs/api/packet",
-//     method: "GET",
-//     params: pageParam,
-//   });
-// }
+export function getPacket(
+  pageParam?: pageParam
+): Promise<requestResponse<Array<packet>>> {
+  return request({
+    url: "/ibs/api/packet",
+    method: "GET",
+    params: pageParam,
+  });
+}
 export function exec(
   id: string,
   command: string,

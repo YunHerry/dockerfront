@@ -6,19 +6,21 @@
         <span class="logo-name">docker-admin</span>
       </div>
       <div class="current-item" :style="{'top':(nowViewIndex * 60)+61 + 'px'}"></div>
-      <div class="button" v-for="(item,index) in menus" @click="clickItem(item,index)">
+      <div class="button" v-for="(item, index) in menus" @click="clickItem(item, index)" :key="index">
         {{ item }}
       </div>
     </div>
     <div class="main-content">
       <userTop :show-logo="false"></userTop>
       <div class="view-content">
-        <component :is="currentView"></component>
+        <component :is="currentView" :key="componentKey"></component>
       </div>
     </div>
   </div>
 </template>
+
 <style scoped lang="scss">
+/* Existing CSS styles */
 .button {
   height: 60px;
   box-sizing: border-box;
@@ -27,9 +29,6 @@
   font-size: 18px;
   cursor: pointer;
 }
-// .button:hover {
-//   background-color: antiquewhite;
-// }
 .index-content {
   width: 100%;
   height: 100%;
@@ -52,10 +51,6 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-}
-.main-content .top-content {
-  height: 60px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 .view-content {
   flex: 1;
@@ -82,6 +77,7 @@
   }
 }
 </style>
+
 <script lang="ts" setup>
 import userTop from "@/components/user/UserTop.vue";
 import UserDashboard from "./content-page/UserDashboard.vue";
@@ -90,6 +86,7 @@ import ImageManager from "./content-page/ImageManager.vue";
 import Other from "./content-page/other.vue";
 import PacketManager from "./content-page/packetManager.vue";
 import { DefineComponent, Ref, reactive, ref, markRaw } from "vue";
+
 type views = Record<string, DefineComponent<any, any, any>>;
 const components: views = {
   "容器管理": markRaw(UserDashboard),
@@ -98,14 +95,19 @@ const components: views = {
   "其他": markRaw(Other),
   "套餐管理": markRaw(PacketManager),
 };
+
 const menus: string[] = [];
 for (let menuName in components) {
   menus.push(menuName);
 }
+
 let currentView: Ref<any> = ref(UserDashboard);
 let nowViewIndex = ref(0);
-function clickItem(item: string,index: number) {
+let componentKey = ref(Date.now());  // Initialize with a unique value
+
+function clickItem(item: string, index: number) {
   currentView.value = components[item];
   nowViewIndex.value = index;
+  componentKey.value = Date.now();  // Change key to force re-creation
 }
 </script>
