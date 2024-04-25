@@ -103,13 +103,13 @@ export function upload(containerId:string,targetPath:string): Promise<requestRes
     }
   });
 }
-// export function createPacket(packetConfig: packetConfig) {
-//   return request.request({
-//     url: "/ibs/api/packet/create",
-//     method: "post",
-//     data: packetConfig,
-//   });
-// }
+export function createPacket(packetConfig: packetConfig) {
+  return request.request({
+    url: "/ibs/api/packet/create?isFree=true",
+    method: "post",
+    data: packetConfig,
+  });
+}
 export function getPacket(
   pageParam?: pageParam
 ): Promise<requestResponse<Array<packet>>> {

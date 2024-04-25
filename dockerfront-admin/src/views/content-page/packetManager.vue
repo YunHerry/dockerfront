@@ -62,6 +62,9 @@ function editPacket(packet) {
      console.log(packet);
      router.push({ name: 'addPacket', params: { packetConfig: packet } });
 }
+function toAddPacket() {
+      router.push('AddPacket'); // Navigate to the AddPacket page
+}
 onMounted(() => {
   getPacket({ page: 1, pageSize: 5 }).then((res) => {
     tableData.value.push(...res.data);
