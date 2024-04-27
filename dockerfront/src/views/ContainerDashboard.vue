@@ -214,7 +214,7 @@ function isShow(buttonType: continerWorkStatus) {
       continerWorkStatus.DELETE,
       continerWorkStatus.RUN,
     ],
-    created: [],
+    created: [continerWorkStatus.RUN],
     paused: [
       continerWorkStatus.RESTART,
       continerWorkStatus.DELETE,
@@ -417,12 +417,7 @@ function loadNode(node: Node, resolve: (data: Array<any>) => void) {
 }
 function getFullPath(node: Node) {
   let nodeParent = node;
-  let url = "";
-  do {
-    console.log(nodeParent);
-    url = (nodeParent.data.absolutePath + url).replaceAll("//", "/");
-    nodeParent = nodeParent.parent;
-  } while (nodeParent?.data.absolutePath);
+  let url = nodeParent.data.absolutePath;
   console.log(url);
   return url;
 }
