@@ -40,6 +40,7 @@
         </div>
         <div class="user-orders card">
           <h3 class="title">订单中心</h3>
+          <el-button @click="toAddPacket">新增订单</el-button>
           <el-table :data="userOrders" style="width: 100%">
             <el-table-column prop="name" label="名称/ID" width="180" />
             <el-table-column prop="state" label="状态" width="180">
@@ -87,6 +88,10 @@
 import UserTop from "@/components/user/UserTop.vue";
 import { getOrders,payOrder } from "@/api/user";
 import { Ref, ref } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+
 const userOrders: Ref<Array<order>> = ref([]);
 getOrders({ page: 1, pageSize: 10 }).then((res) => {
   userOrders.value = [];
@@ -96,9 +101,14 @@ getOrders({ page: 1, pageSize: 10 }).then((res) => {
 function pay(orderId: string) {
   payOrder(orderId).then((res) => {
     console.log('Payment successful');
+    router.go(0);
   }).catch((error) => {
     console.error('Payment failed:', error);
+    router.go(0);
   });
+}
+function toAddPacket() {
+      router.push('order'); // Navigate to the AddPacket page
 }
 </script>
 <style lang="scss" scoped>
