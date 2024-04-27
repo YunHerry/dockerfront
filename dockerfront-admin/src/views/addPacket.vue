@@ -38,7 +38,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="addPacket">立即创建</el-button>
-        <el-button>取消</el-button>
+        <el-button @click="goBack">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -110,19 +110,27 @@ export default {
         .then(response => {
           // Packet added successfully, do something
           ElMessage.warning("创建套餐成功!");
+          window.history.back();
         })
         .catch(error => {
           // Error occurred while adding packet, handle the error
           ElMessage.warning("创建套餐失败!"+this.form);
         });
     },
+    goBack(){
+        window.history.back();
+        console.log("返回");
+    },
     updatePacket() {
       updatePacket(this.packet)
         .then(response => {
           // 套餐更新成功后的处理
+          ElMessage.warning("创建套餐成功!");
+          window.history.back();
         })
         .catch(error => {
           // 处理更新套餐时的错误
+          ElMessage.warning("创建套餐失败!"+this.form);
         });
     }
   }
