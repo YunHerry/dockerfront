@@ -119,6 +119,15 @@ export function getPacket(
     params: pageParam,
   });
 }
+export function getImage(
+  pageParam?: pageParam
+): Promise<requestResponse<Array<image>>> {
+  return request({
+    url: "/ibs/api/images",
+    method: "POST",
+    data: pageParam,
+  });
+}
 export function exec(
   id: string,
   command: string,
