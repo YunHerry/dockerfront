@@ -143,9 +143,5 @@ onMounted(() => {
     height: 100%;
   }
 }
-.card {
-  box-sizing: border-box;
-  padding: 20px;
-  box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.16);
-}
+
 </style>
