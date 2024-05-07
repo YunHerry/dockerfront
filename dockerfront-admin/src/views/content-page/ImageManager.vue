@@ -11,9 +11,6 @@
             <template #title>
               <div style="display: inline-flex; align-items: center">
                 当前服务器存有镜像
-                <el-icon style="margin-left: 4px" :size="12">
-                  <Male />
-                </el-icon>
               </div>
             </template>
             <!-- <template #suffix>/100</template> -->
@@ -34,7 +31,7 @@
 
     <div class="dockers-table card">
       <i class="title">服务器镜像</i>
-      <el-table class="image-list" :data="nowImagesData" style="width: 100%">
+      <el-table class="image-list"  :data="nowImagesData" style="width: 100%" :row-style="{height: '80px'}" >
         <el-table-column prop="id" label="ID" width="180" />
         <el-table-column prop="tag" label="Tag" width="180" />
         <el-table-column prop="name" label="镜像名称" width="180" />
@@ -61,10 +58,12 @@
         :data="allImagesData"
         style="width: 100%"
         v-loadmore="loadMoreImages"
+        :row-style="{height: '30px'}"
+        height="160"
       >
         <el-table-column prop="id" label="ID" width="180" />
         <el-table-column prop="tag" label="Tag" width="180" />
-        <el-table-column prop="name" label="镜像名称" width="180" />
+        <el-table-column prop="name" label="镜像名称" />
         <el-table-column width="180">
           <template #header>
             <el-input
@@ -77,7 +76,9 @@
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <template #default="scope"> </template>
+          <template #default="scope">
+            <el-button size="small" @click="">拉取</el-button>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -85,8 +86,14 @@
 </template>
 <script lang="ts" setup>
 import { getImage } from "@/api/admin";
-import { Directive, DirectiveArguments, DirectiveBinding, ObjectDirective, Ref, h, onMounted, ref, withDirectives } from "vue";
-
+import store from "@/store";
+import { websocketInit } from "@/utils/websocket";
+import { Directive, DirectiveArguments, DirectiveBinding, ObjectDirective, Ref, h, onActivated, onDeactivated, onMounted, onUnmounted, ref, withDirectives } from "vue";
+const client = websocketInit(`ws://localhost:8888/ibs/api/socket/command/${store.getters["user/token"]}`,()=>{
+  return Promise.resolve();
+},()=>{
+  return Promise.resolve();
+},null,null);
 const nowImagesData = ref([]);
 const allImagesData: Ref<Array<image>> = ref([]);
 
@@ -101,23 +108,32 @@ function search(value: string) {
 }
 const vLoadmore:Directive = {
   beforeMount: function(el, binding) {
-    const selectWrap = el.querySelector(".el-table__body-wrapper");
-    selectWrap?.addEventListener("scroll", function (this: HTMLElement) {
+    const selectWrap = el.querySelector(".el-scrollbar__wrap.el-scrollbar__wrap--hidden-default");
+    selectWrap?.addEventListener("scroll", function (this:HTMLElement) {
+      console.log(1)
       const scrollDistance =
         this.scrollHeight - this.scrollTop - this.clientHeight;
       if (scrollDistance <= 0.5) {
         binding.value(); //执行在使用时绑定的函数，在这里即loadMorePerson方法
       }
     });
-  }} ;
+  }};
+  const nowPage = ref(0);
 function loadMoreImages() {
-  console.log(1)
+  nowPage.value++;
+  getImage({ page: nowPage.value, pageSize: 10 }).then((res) => {
+    allImagesData.value.push(...res.data);
+  });
 }
 onMounted(() => {
-  getImage({ page: 0, pageSize: 10 }).then((res) => {
+  getImage({ page: nowPage.value, pageSize: 10 }).then((res) => {
     allImagesData.value.push(...res.data);
   });
 });
+onDeactivated(()=>{
+  console.log("通道关闭");
+  client.close();
+})
 </script>
 <style lang="scss" scoped>
 .images-content {

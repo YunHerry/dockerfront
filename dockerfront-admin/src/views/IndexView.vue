@@ -13,7 +13,9 @@
     <div class="main-content">
       <userTop :show-logo="false"></userTop>
       <div class="view-content">
-        <component :is="currentView" :key="componentKey"></component>
+        <KeepAlive>
+          <component :is="currentView" :key="componentKey"></component>
+        </KeepAlive>
       </div>
     </div>
   </div>

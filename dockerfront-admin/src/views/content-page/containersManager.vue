@@ -52,7 +52,7 @@ function search(value: string) {
 }
 let tableData: Ref<Array<continer>> = ref([]);
 onMounted(() => {
-  getContiners().then((res) => {
+  getContainers().then((res) => {
     tableData.value.push(...res.data);
   });
   // continerStatusFormatUtils.getValues(tableData.value);
