@@ -61,6 +61,7 @@
   justify-content: center;
   align-items: center;
   padding: 40px 0px;
+  overflow: hidden;
 }
 .menu-content .logo {
   width: 100%;

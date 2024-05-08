@@ -103,6 +103,16 @@ export function upload(containerId:string,targetPath:string): Promise<requestRes
     }
   });
 }
+export function pullImage(name:string,tag:string) {
+  return request({
+    url: `/ibs/api/images/pull`,
+    method: "POST",
+    data: {
+      name: name,
+      tag:tag
+    }
+  });
+}
 export function createPacket(packetConfig: packetConfig) {
   return request.request({
     url: "/ibs/api/packet/create?isFree=true",
@@ -120,12 +130,15 @@ export function getPacket(
   });
 }
 export function getImage(
-  pageParam?: pageParam
+  isLocal:boolean,pageParam?: pageParam
 ): Promise<requestResponse<Array<image>>> {
   return request({
     url: "/ibs/api/images",
     method: "POST",
-    data: pageParam,
+    data: {
+      pageParam,
+      center:isLocal
+    },
   });
 }
 export function exec(

@@ -7,7 +7,7 @@ export function websocketInit(
     onMessage: (data: any) => void,
     timerFunction: ((client: w3cwebsocket) => void) |null,
     //if true run else false
-    istimerFunctionRun: (() => boolean) | null,
+    isTimerFunctionRun: (() => boolean) | null,
   ) {
     const client = new w3cwebsocket(
       url
@@ -28,11 +28,11 @@ export function websocketInit(
         //temp function
         if(!timerFunction) return;
         setTimeout(() => {
-          if (!istimerFunctionRun || !istimerFunctionRun()) return;
+          if (!isTimerFunctionRun || !isTimerFunctionRun()) return;
           timerFunction(client);
         }, 2000);
         websocketTimer = setInterval(() => {
-          if (!istimerFunctionRun || !istimerFunctionRun()) return;
+          if (!isTimerFunctionRun || !isTimerFunctionRun()) return;
           timerFunction(client);
         }, 6000);
       });
