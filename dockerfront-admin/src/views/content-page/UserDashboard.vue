@@ -133,7 +133,6 @@ onMounted(() => {
   .user-orders {
     margin-top: 10px;
     width: 80%;
-    height: 400px;
   }
 }
 .user-dashboard-content {

@@ -2,7 +2,7 @@
   <div class="packets-content">
     <i class="title">套餐管理</i>
     <div class="dockers-table">
-      <el-button @click="isShowAddPacket = true">新增套餐</el-button>
+      <el-button @click="resetData(),isShowAddPacket = true">新增套餐</el-button>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="name" label="名称/ID" width="180" />
         <el-table-column prop="description" label="描述" width="180" />
@@ -34,19 +34,19 @@
     >
       <el-form ref="form" :model="nowPacketData" label-width="80px">
         <el-form-item label="套餐名称">
-          <el-input v-model="nowPacketData.name"></el-input>
+          <el-input v-model="nowPacketData.data.name"></el-input>
         </el-form-item>
         <el-form-item label="套餐描述">
-          <el-input v-model="nowPacketData.desc"></el-input>
+          <el-input v-model="nowPacketData.data.description"></el-input>
         </el-form-item>
         <el-form-item label="CPU参数">
           <el-select-v2
-            v-model="nowPacketData.cpuCoreNumber"
+            v-model="nowPacketData.data.hardware.cpuCoreNumber"
             :options="cpuCoreOption"
             placeholder="CPU核心数量"
           />
           <el-select
-            v-model="nowPacketData.cpuType"
+            v-model="nowPacketData.data.hardware.cpuType"
             placeholder="CPU类型"
             style="margin-top: 16px"
           >
@@ -56,33 +56,33 @@
         </el-form-item>
         <el-form-item label="硬盘空间">
           <el-slider
-            v-model="nowPacketData.disk"
+            v-model="nowPacketData.data.hardware.disk"
             :min="1"
             :format-tooltip="(val:number)=>`${val}GB`"
             class="data-line"
           >
           </el-slider>
-          {{ nowPacketData.disk }}GB
+          {{ nowPacketData.data.hardware.disk }}GB
         </el-form-item>
         <el-form-item label="内存">
           <el-slider
-            v-model="nowPacketData.memory"
+            v-model="nowPacketData.data.hardware.memory"
             :min="1"
             :format-tooltip="(val:number)=>`${val}G`"
             class="data-line"
           />
-          {{ nowPacketData.memory }}G
+          {{ nowPacketData.data.hardware.memory }}G
         </el-form-item>
 
         <el-form-item label="带宽">
           <el-slider
-            v-model="nowPacketData.networkSpeed"
+            v-model="nowPacketData.data.hardware.networkSpeed"
             :min="1"
             :format-tooltip="(val:number)=>`${val}M`"
             class="data-line"
           >
           </el-slider>
-          {{ nowPacketData.networkSpeed }}M
+          {{ nowPacketData.data.hardware.networkSpeed }}M
         </el-form-item>
       </el-form>
       <template #footer>
@@ -96,9 +96,9 @@
 </template>
 
 <script lang="ts" setup>
-import { getPacket, createPacket } from "@/api/admin";
+import { getPacket, createPacket, updatePacket } from "@/api/admin";
 import UserTop from "@/components/user/UserTop.vue";
-import { Ref, onMounted, reactive, ref } from "vue";
+import { Ref, mergeProps, onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
   ElTable,
@@ -109,23 +109,59 @@ import {
 } from "element-plus";
 const input = ref("");
 const router = useRouter();
-const nowPacketData = reactive({
-  _id: null,
-  cpuType: "Intel",
-  cpuCoreNumber: 1,
-  networkSpeed: 0,
-  disk: 0,
-  memory: 0,
-  cpuTypemoney: 0,
-  cpuCoreNumberMoney: 0,
-  networkSpeedMoney: 0,
-  diskMoney: 0,
-  memoryMoney: 0,
-  isFree: false,
-  name: "",
-  desc: "",
+const nowPacketData = reactive<{ data: packet; packetConfig: packetConfig }>({
+  data: {
+    description: "",
+    hardware: {
+      cpuCoreNumber: 1,
+      cpuType: "1",
+      createdAt: "",
+      disk: 0,
+      id: 2,
+      memory: 0,
+      money: 0,
+      networkSpeed: 0,
+      updatedAt: "",
+    },
+    hardwareId: -1,
+    id: -1,
+    name: "",
+  },
+  packetConfig: {
+    cpuType: "",
+    cpuCoreNumber: 0,
+    networkSpeed: 0,
+    disk: 0,
+    memory: 0,
+    cpuTypemoney: 0,
+    cpuCoreNumberMoney: 0,
+    networkSpeedMoney: 0,
+    diskMoney: 0,
+    memoryMoney: 0,
+    isFree: false,
+    name: "",
+    desc: "",
+  },
 });
-
+function resetData() {
+  nowPacketData.data = {
+    description: "",
+    hardware: {
+      cpuCoreNumber: 1,
+      cpuType: "1",
+      createdAt: "",
+      disk: 0,
+      id: 2,
+      memory: 0,
+      money: 0,
+      networkSpeed: 0,
+      updatedAt: "",
+    },
+    hardwareId: -1,
+    id: -1,
+    name: "",
+  };
+}
 const cpuCoreOption = [1, 2, 4, 8, 16, 32].map((item) => {
   return {
     value: item,
@@ -152,25 +188,34 @@ function search(value: string) {
   });
 }
 function submitPacket() {
-  if (nowPacketData._id) {
+  console.log(!nowPacketData.data.id);
+  if (nowPacketData.data.id) {
     console.log("update packet");
-    // updatePacket(this.packet)
-    //     .then(response => {
-    //       // 套餐更新成功后的处理
-    //       ElMessage.warning("创建套餐成功!");
-    //       window.history.back();
-    //     })
-    //     .catch(error => {
-    //       // 处理更新套餐时的错误
-    //       ElMessage.warning("创建套餐失败!"+nowPacketData);
-    //     });
+    updatePacket(nowPacketData.data)
+        .then(response => {
+          // 套餐更新成功后的处理
+          ElMessage.warning("创建套餐成功!");
+          isShowAddPacket.value =false;
+          resetData();
+        })
+        .catch(error => {
+          // 处理更新套餐时的错误
+          ElMessage.warning("创建套餐失败!"+nowPacketData);
+        });
   } else {
     console.log("add packet");
-    createPacket(nowPacketData)
+    const data = Object.assign(
+      nowPacketData.packetConfig,
+      nowPacketData.data.hardware
+    );
+    data.name = nowPacketData.data.name;
+    data.desc = nowPacketData.data.description;
+    createPacket(data)
       .then((response) => {
         // Packet added successfully, do something
         ElMessage.warning("创建套餐成功!");
         isShowAddPacket.value = false;
+        resetData();
         refreshData();
       })
       .catch((error) => {
@@ -180,8 +225,10 @@ function submitPacket() {
   }
 }
 function editPacket(packet: packet) {
-  console.log(packet);
-  // nowPacketData.
+  nowPacketData.data = Object.assign(nowPacketData.data, packet);
+  nowPacketData.data.id = packet.id;
+  isShowAddPacket.value = true;
+  console.log(nowPacketData.data);
 }
 function showAddPacket() {}
 function toAddPacket() {

@@ -11,4 +11,6 @@ declare interface packetConfig{
     memory: number;
     name: string;
     desc: string;
+    _id?:number
+    isFree: boolean;
 }

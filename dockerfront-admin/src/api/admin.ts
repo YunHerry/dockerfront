@@ -113,9 +113,22 @@ export function pullImage(name:string,tag:string) {
     }
   });
 }
+export function getHardWare(hardwareId:number) {
+  return request.request({
+    url: `/ibs/api/hardware/get/${hardwareId}`,
+    method: "GET",
+  });
+}
 export function createPacket(packetConfig: packetConfig) {
   return request.request({
     url: "/ibs/api/packet/create?isFree=true",
+    method: "post",
+    data: packetConfig,
+  });
+}
+export function updatePacket(packetConfig: packet) {
+  return request.request({
+    url: "/ibs/api/packet/update",
     method: "post",
     data: packetConfig,
   });
