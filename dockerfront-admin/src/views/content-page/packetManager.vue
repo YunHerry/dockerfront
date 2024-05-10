@@ -194,13 +194,14 @@ function submitPacket() {
     updatePacket(nowPacketData.data)
         .then(response => {
           // 套餐更新成功后的处理
-          ElMessage.warning("创建套餐成功!");
+          ElMessage.warning("更新套餐成功!");
           isShowAddPacket.value =false;
           resetData();
+          refreshData();
         })
         .catch(error => {
           // 处理更新套餐时的错误
-          ElMessage.warning("创建套餐失败!"+nowPacketData);
+          ElMessage.warning("更新套餐失败!"+nowPacketData);
         });
   } else {
     console.log("add packet");

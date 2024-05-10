@@ -47,25 +47,33 @@
         :data="nowImagesData"
         style="width: 100%"
         height="140"
+        v-loadmore="
+          loadMoreImages(false, nowImagesData, nowLocalPage, localEnd)
+        "
         :row-style="{ height: '30px' }"
       >
-        <el-table-column prop="id" label="ID" width="180" />
-        <el-table-column prop="tag" label="Tag" width="180" />
-        <el-table-column prop="name" label="镜像名称" show-overflow-tooltip />
-        <el-table-column width="180">
-          <template #header>
-            <el-input
-              v-model="input"
-              size="small"
-              placeholder="关键字检索"
-              @change="search"
-              clearable
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template #default="scope"> </template>
-        </el-table-column>
+        <template #append>
+          <div class="no-more" v-show="localEnd">我~是有底线的 (～￣▽￣)～</div>
+        </template>
+        <template #default>
+          <el-table-column prop="id" label="ID" width="180" />
+          <el-table-column prop="tag" label="Tag" width="180" />
+          <el-table-column prop="name" label="镜像名称" show-overflow-tooltip />
+          <el-table-column width="180">
+            <template #header>
+              <el-input
+                v-model="input"
+                size="small"
+                placeholder="关键字检索"
+                @change="search"
+                clearable
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template #default="scope"> </template>
+          </el-table-column>
+        </template>
       </el-table>
     </div>
     <div class="dockers-table card">
@@ -74,34 +82,39 @@
         class="image-list"
         :data="allImagesData"
         style="width: 100%"
-        v-loadmore="loadMoreImages(true, allImagesData, nowAllPage)"
+        v-loadmore="loadMoreImages(true, allImagesData, nowAllPage, allEnd)"
         :row-style="{ height: '30px' }"
         height="160"
       >
-        <el-table-column prop="id" label="ID" width="180" />
-        <el-table-column prop="tag" label="Tag" width="180" />
-        <el-table-column prop="name" label="镜像名称" show-overflow-tooltip />
-        <el-table-column width="180">
-          <template #header>
-            <el-input
-              v-model="input"
-              size="small"
-              placeholder="关键字检索"
-              @change="search"
-              clearable
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button
-              size="small"
-              v-show="!pulling"
-              @click="pull(scope.row.name, scope.row.tag)"
-              >拉取</el-button
-            >
-          </template>
-        </el-table-column>
+        <template #append>
+          <div class="no-more" v-show="allEnd">我~是有底线的 (～￣▽￣)～</div>
+        </template>
+        <template #default>
+          <el-table-column prop="id" label="ID" width="180" />
+          <el-table-column prop="tag" label="Tag" width="180" />
+          <el-table-column prop="name" label="镜像名称" show-overflow-tooltip />
+          <el-table-column width="180">
+            <template #header>
+              <el-input
+                v-model="input"
+                size="small"
+                placeholder="关键字检索"
+                @change="search"
+                clearable
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template #default="scope">
+              <el-button
+                size="small"
+                v-show="!pulling"
+                @click="pull(scope.row.name, scope.row.tag)"
+                >拉取</el-button
+              >
+            </template>
+          </el-table-column>
+        </template>
       </el-table>
     </div>
   </div>
@@ -123,7 +136,6 @@ const client = websocketInit(
     return Promise.resolve();
   },
   (data) => {
-    console.log(data);
     if (data.length <= 0) {
       nowStep.value = 1;
     } else {
@@ -169,54 +181,70 @@ function pull(name: string, tag: string) {
 //pull down of part
 const vLoadmore: Directive = {
   beforeMount: function (el, binding) {
-    console.log(binding);
     const selectWrap = el.querySelector(
       ".el-scrollbar__wrap.el-scrollbar__wrap--hidden-default"
     );
-    selectWrap?.addEventListener("scroll", function (this: HTMLElement) {
+    selectWrap.addEventListener("scroll", function (this: HTMLElement) {
+      let sign = 0;
       const scrollDistance =
-        this.scrollHeight - this.scrollTop - this.clientHeight;
-      console.log(scrollDistance);
-      if (scrollDistance <= 1) {
+        this.scrollHeight - this.scrollTop - this.clientHeight - 1;
+      if (scrollDistance <= sign) {
         binding.value();
       }
     });
+    binding.value();
   },
 };
 const nowLocalPage = ref(0);
 const nowAllPage = ref(0);
+const localEnd = ref(false);
+const allEnd = ref(false);
 function loadMoreImages(
   isLocal: boolean,
   ref: Ref<Array<image>>,
-  pageIndex: Ref<number>
+  pageIndex: Ref<number>,
+  isEnd: Ref<boolean>
 ): Function;
 function loadMoreImages(
   isLocal: boolean,
   ref: Array<image>,
-  pageIndex: number
+  pageIndex: number,
+  isEnd: boolean
 ): Function;
 function loadMoreImages(
   isLocal: boolean,
   ref: Ref<Array<image>> | Array<image>,
-  pageIndex: Ref<number> | number
+  pageIndex: Ref<number> | number,
+  isEnd: Ref<boolean> | boolean
 ): Function {
   return () => {
-    if (isRef<Array<image>>(ref) && isRef<number>(pageIndex)) {
+    if (
+      isRef<Array<image>>(ref) &&
+      isRef<number>(pageIndex) &&
+      isRef<boolean>(isEnd)
+    ) {
       pageIndex.value++;
       getImage(isLocal, { page: pageIndex.value, pageSize: 10 }).then((res) => {
-        ref.value.push(...res.data);
+        if (res.data.length) ref.value.push(...res.data);
+        //@TODO
+        else (isEnd as Ref).value = true;
       });
-    } else if (typeof pageIndex == "number" && Array.isArray(ref)) {
+    } else if (
+      typeof pageIndex == "number" &&
+      Array.isArray(ref) &&
+      typeof isEnd == "boolean"
+    ) {
       pageIndex++;
       getImage(isLocal, { page: pageIndex, pageSize: 10 }).then((res) => {
-        ref.push(...res.data);
+        if (res.data.length) ref.push(...res.data);
+        else isEnd = true;
       });
     }
   };
 }
 onMounted(() => {
-  loadMoreImages(true, allImagesData, nowAllPage)();
-  loadMoreImages(false, nowImagesData, nowLocalPage)();
+  // loadMoreImages(true, allImagesData, nowAllPage)();
+  // loadMoreImages(false, nowImagesData, nowLocalPage)();
 });
 onDeactivated(() => {
   console.log("通道关闭");
@@ -241,6 +269,13 @@ onDeactivated(() => {
   }
   .el-scrollbar {
     text-align: left;
+  }
+  .no-more {
+    color: gray;
+    text-align: center;
+    font-size: 12px;
+    box-sizing: border-box;
+    padding: 10px;
   }
 }
 .exec-content {
