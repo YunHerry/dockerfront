@@ -125,6 +125,7 @@ import store from "@/store";
 import { websocketInit } from "@/utils/websocket";
 import { Upload } from "@element-plus/icons-vue";
 import { Directive, Ref, isRef, onDeactivated, onMounted, ref } from "vue";
+//websocket
 const client = websocketInit(
   `ws://localhost:8888/ibs/api/socket/command/${store.getters["user/token"]}`,
   () => {
@@ -246,10 +247,7 @@ onMounted(() => {
   // loadMoreImages(true, allImagesData, nowAllPage)();
   // loadMoreImages(false, nowImagesData, nowLocalPage)();
 });
-onDeactivated(() => {
-  console.log("通道关闭");
-  client.close();
-});
+
 </script>
 <style lang="scss" scoped>
 .images-content {
