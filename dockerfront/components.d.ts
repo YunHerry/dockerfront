@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BeianFooter: typeof import('./src/components/beianFooter.vue')['default']
+    ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']

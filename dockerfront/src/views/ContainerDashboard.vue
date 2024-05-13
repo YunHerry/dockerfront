@@ -234,7 +234,8 @@ let cpuOption: EChartsOption = {
     boundaryGap: false,
   },
   yAxis: {
-    // max: 100,
+    max: 100,
+    // data: [0,50,100]
   },
   series: [
     {
@@ -256,7 +257,8 @@ let memoryOption: EChartsOption = {
     boundaryGap: false,
   },
   yAxis: {
-    // max: 100,
+    max: 100,
+    // data: [0,50,100]
   },
   series: [
     {

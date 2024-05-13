@@ -126,9 +126,11 @@ import { websocketInit } from "@/utils/websocket";
 import { Upload } from "@element-plus/icons-vue";
 import { Directive, Ref, isRef, onDeactivated, onMounted, ref } from "vue";
 //websocket
-const client = websocketInit(
+let clientRef:any = {};
+ websocketInit(
   `ws://localhost:8888/ibs/api/socket/command/${store.getters["user/token"]}`,
-  () => {
+  clientRef,
+  (client) => {
     client.send(
       JSON.stringify({
         command: "images/get",
@@ -164,7 +166,7 @@ function search(value: string) {
 const pulling = ref(false);
 const nowStep = ref(1);
 function updatePullingStatus() {
-  client.send(
+  clientRef.send(
     JSON.stringify({
       command: "images/get",
     })

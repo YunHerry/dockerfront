@@ -251,10 +251,8 @@ let props = withDefaults(defineProps<props>(), {
 });
 onMounted(() => {
   userLoginStatus.value = !isUserInfoExpire();
-  console.log(props);
 });
 onUpdated(() => {
-  console.log(store.getters["user/userInfo"]);
   userProfile.value = store.getters["user/userInfo"];
 });
 function logout() {

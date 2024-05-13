@@ -1,8 +1,10 @@
 import { Ref, onActivated, onDeactivated, onUnmounted } from "vue";
 import { w3cwebsocket, IMessageEvent } from "websocket";
-let websocketInstances = [];
+let reconnectTimes = 5;
+let nowReconnectTimes = 0;
 export function websocketInit(
   url: string,
+  clientRef: {close:Function,send:Function},
   openFunction: (client: w3cwebsocket) => Promise<void>,
   onMessage: (data: any) => void,
   timerFunction: ((client: w3cwebsocket) => void) | null,
@@ -22,8 +24,7 @@ export function websocketInit(
     client.onopen = () => {
       console.log("打开成功");
       const isRuning = (statusStr: string) => statusStr == "running";
-      websocketInstances.push(client);
-      if(!client) return;
+      if (!client) return;
       openFunction(client).then(() => {
         //@TODO the init need to wait for last respond
         // timerFunction(client);
@@ -45,11 +46,25 @@ export function websocketInit(
     };
     client.onclose = function (e) {
       console.log(e);
+      // if(reconnectTimes < nowReconnectTimes) reconnect();
     };
   };
+  const reconnect = () => {
+    nowReconnectTimes++;
+    websocketInit(
+      url,
+      clientRef,
+      openFunction,
+      onMessage,
+      timerFunction,
+      isTimerFunctionRun
+    );
+  };
   onActivated(() => {
-    console.log(1);
     init();
+    window.onbeforeunload = () => {
+      client?.close();
+    };
   });
   onDeactivated(() => {
     console.log("通道关闭");
@@ -57,17 +72,16 @@ export function websocketInit(
     client = null;
     clearInterval(websocketTimer as NodeJS.Timeout);
   });
-  return {
-    close: () => {
-      clearTimeout(websocketTimer as NodeJS.Timeout);
+  clientRef.close = () => {
+    clearTimeout(websocketTimer as NodeJS.Timeout);
+    client?.close();
+    window.onbeforeunload = () => {
       client?.close();
-    },
-    send: (msg: string) => {
-      console.log("请求发送");
-      if (client?.readyState===1) {
-        client?.send(msg);
-        console.log("发送成功")
-      }
-    },
+    };
+  };
+  clientRef.send = (msg: string) => {
+    if (client?.readyState === 1) {
+      client?.send(msg);
+    }
   };
 }

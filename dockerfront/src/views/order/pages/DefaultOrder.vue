@@ -59,36 +59,65 @@
           </div>
         </div>
       </div>
-      <el-input v-model="nowPorts" placeholder="端口映射" clearable />
-
-      <el-input v-model="nowContainerName" placeholder="容器名" clearable />
-
-      <el-form
-        ref="formRef"
-        :model="envs"
-        label-width="120px"
-        class="demo-dynamic"
-      >
-        <el-form-item
-          v-for="(item, index) in envs"
-          :key="index"
-          :label="'环境变量' + index"
-          :prop="'myenvs.' + index + '.value'"
-          :rules="{
-            required: true,
-            message: '环境变量不能为空',
-            trigger: 'blur',
-          }"
-        >
-          <el-input v-model="envs[index]" />
-          <el-button class="mt-2" @click.prevent="removeDomain(index)"
-            >删除当前变量</el-button
-          >
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="addDomain">新增环境变量</el-button>
-        </el-form-item>
-      </el-form>
+      <div class="base_item">
+        <div class="part-title">端口映射</div>
+        <div class="mirror-content">
+          <!-- <div class="menu">
+                      <a href="">快速配置</a>
+                      <a href="">自定义配置</a>
+                    </div> -->
+          <div>
+            <el-input
+              v-model="nowPorts"
+              placeholder="外网端口"
+              clearable
+              style="width: 10%"
+            />
+            <el-input
+              v-model="nowPorts"
+              placeholder="内网端口"
+              clearable
+              style="width: 10%"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="container-name-item base_item">
+        <div class="part-title">容器名称</div>
+        <div>
+          <el-input
+            v-model="nowContainerName"
+            placeholder="容器名"
+            clearable
+            style="width: 100%"
+          />
+        </div>
+      </div>
+      <div class="base_item">
+        <div class="part-title">环境变量</div>
+        <div class="mirror-content">
+          <el-form ref="formRef" :model="envs" class="demo-dynamic">
+            <el-form-item
+              v-for="(item, index) in envs"
+              :key="index"
+              :label="''"
+              :prop="'myenvs.' + index + '.value'"
+              :rules="{
+                required: true,
+                message: '环境变量不能为空',
+                trigger: 'blur',
+              }"
+            >
+              <el-input v-model="envs[index]" style="width: 50%;"/>
+              <el-button class="mt-2" @click.prevent="removeDomain(index)"
+                >-</el-button
+              >
+              <el-button @click="addDomain">+</el-button>
+            </el-form-item>
+            <el-button @click="addDomain" v-show="envs.length == 0">+</el-button>
+          </el-form>
+        </div>
+      </div>
       <!-- <div class="bandwidth base_item">
         <div class="part-title">带宽</div>
         <div class="bandwidth-content">
@@ -99,9 +128,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { Ref, onMounted, ref,defineEmits } from "vue";
+import { Ref, onMounted, ref, defineEmits } from "vue";
 import { getPacket, getImages } from "@/api/user";
-import type { FormInstance } from 'element-plus'
+import type { FormInstance } from "element-plus";
 const nowInstanceIndex = ref(0);
 const nowImageName: Ref<string> = ref("");
 const packetList: Ref<Array<packet>> = ref([]);
@@ -150,11 +179,11 @@ function submit() {
   };
   return {
     packetId: packetList.value[nowInstanceIndex.value].id,
-    orderConfig: orderConfig
+    orderConfig: orderConfig,
   };
 }
 export interface orderPage {
-  submit: Function
+  submit: Function;
 }
 defineExpose({
   submit,
@@ -360,6 +389,15 @@ defineExpose({
     a.active:after {
       border-bottom-color: #0052d9 !important;
     }
+  }
+}
+.container-name-item {
+  .part-title {
+    font-size: 14px;
+    color: $gray;
+    // min-height: 150px;
+    min-width: 150px;
+    display: inline-block;
   }
 }
 </style>
