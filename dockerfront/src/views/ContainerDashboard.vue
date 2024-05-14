@@ -69,21 +69,21 @@
                 v-show="isShow(continerWorkStatus.STOP)"
                 @click="controlContiner(continerWorkStatus.STOP)"
               >
-                <i class="iconfont icon-Pause"></i>
+                <i class="iconfont icon-poweroff"></i>
                 停机
               </div>
               <div
                 v-show="isShow(continerWorkStatus.RESTART)"
                 @click="showFileTreeDialog"
               >
-                <i class="iconfont icon-redo"></i>
-                上传
+                <i class="iconfont icon-container"></i>
+                文件管理
               </div>
               <div
                 v-show="isShow(continerWorkStatus.RESTART)"
                 @click="controlContiner(continerWorkStatus.RESTART)"
               >
-                <i class="iconfont icon-redo"></i>
+                <i class="iconfont icon-reload"></i>
                 重启
               </div>
               <!-- <div @click="initTest">

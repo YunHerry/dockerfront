@@ -10,37 +10,17 @@
             :class="index == nowInstanceIndex ? 'active' : ''"
             @click="tapInstance(index)"
           >
-            <!-- 基础配置 (2H2GB) -->
             {{ packetItem.name }}
             <div class="produce_description">
               {{ packetItem.description }}
             </div>
-            <!-- <div class="info">系统盘: 50GB</div> -->
           </div>
-          <!-- <div>
-                      <el-skeleton :rows="3">
-                        <template #template>
-                          <div>
-                            <el-skeleton-item variant="p" style="width: 50%" />
-                            <el-skeleton-item
-                              variant="text"
-                              style="margin-top: 4px; width: 80%"
-                            />
-                            <el-skeleton-item variant="p" style="width: 40%" />
-                          </div>
-                        </template>
-                      </el-skeleton>
-                    </div> -->
           <div></div>
         </div>
       </div>
       <div class="mirror base_item">
         <div class="part-title">镜像</div>
         <div class="mirror-content">
-          <!-- <div class="menu">
-                      <a href="">快速配置</a>
-                      <a href="">自定义配置</a>
-                    </div> -->
           <div class="mirror-panel">
             <div
               class="mirror-item"
@@ -62,23 +42,35 @@
       <div class="base_item">
         <div class="part-title">端口映射</div>
         <div class="mirror-content">
-          <!-- <div class="menu">
-                      <a href="">快速配置</a>
-                      <a href="">自定义配置</a>
-                    </div> -->
-          <div>
+          <i
+            v-show="ports.length < 1"
+            style="display: block"
+            class="iconfont icon-plus port-btn"
+            @click="ports.push([])"
+          ></i>
+          <div class="port-item" v-for="(portItem, index) in ports">
             <el-input
-              v-model="nowPorts"
+              v-model="portItem[0]"
               placeholder="外网端口"
               clearable
               style="width: 10%"
             />
             <el-input
-              v-model="nowPorts"
+              v-model="portItem[1]"
               placeholder="内网端口"
               clearable
               style="width: 10%"
             />
+            <div class="port-btns">
+              <i
+                class="iconfont icon-plus port-btn"
+                @click="ports.push([])"
+              ></i>
+              <i
+                class="iconfont icon-minus port-btn"
+                @click="ports.splice(index, 1)"
+              ></i>
+            </div>
           </div>
         </div>
       </div>
@@ -108,13 +100,16 @@
                 trigger: 'blur',
               }"
             >
-              <el-input v-model="envs[index]" style="width: 50%;"/>
-              <el-button class="mt-2" @click.prevent="removeDomain(index)"
-                >-</el-button
-              >
-              <el-button @click="addDomain">+</el-button>
+              <el-input v-model="envs[index]" style="width: 50%" />
+              <i class="iconfont icon-plus port-btn" @click="addDomain"></i>
+              <i
+                class="iconfont icon-minus port-btn"
+                @click="removeDomain(index)"
+              ></i>
             </el-form-item>
-            <el-button @click="addDomain" v-show="envs.length == 0">+</el-button>
+            <el-button @click="addDomain" v-show="envs.length == 0"
+              >+</el-button
+            >
           </el-form>
         </div>
       </div>
@@ -136,6 +131,7 @@ const nowImageName: Ref<string> = ref("");
 const packetList: Ref<Array<packet>> = ref([]);
 const imageList: Ref<Array<image>> = ref([]);
 const envs: Ref<Array<string>> = ref([]);
+const ports: Ref<Array<Array<string>>> = ref([]);
 const nowPorts = ref("");
 const nowContainerName = ref("");
 const formRef = ref<FormInstance>();
@@ -398,6 +394,32 @@ defineExpose({
     // min-height: 150px;
     min-width: 150px;
     display: inline-block;
+  }
+}
+.port-btn {
+  color: $gray;
+  cursor: pointer;
+}
+.port-item {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  &:first-child {
+    margin-top: 0;
+  }
+  .el-input:nth-child(2),
+  .port-btns {
+    margin-left: 10px;
+  }
+  .port-btns {
+    display: flex;
+    align-items: center;
+    display: none;
+  }
+
+  .el-input:focus-within ~ .port-btns,
+  &:hover > .port-btns {
+    display: flex;
   }
 }
 </style>

@@ -14,17 +14,127 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-Pause:before {
-    content: "\e605";
+.icon-minus:before {
+    content: "\e7fd";
+}
+
+.icon-plus:before {
+    content: "\e8fe";
+}
+
+
+.icon-reload:before {
+    content: "\e788";
 }
 
 .icon-poweroff:before {
-    content: "\e774";
+    content: "\e78c";
 }
 
-.icon-redo:before {
-    content: "\e831";
+.icon-setting:before {
+    content: "\e78e";
 }
+
+.icon-detail:before {
+    content: "\e793";
+}
+
+.icon-linechart:before {
+    content: "\e7af";
+}
+
+.icon-barchart:before {
+    content: "\e7b0";
+}
+
+.icon-pointmap:before {
+    content: "\e7b1";
+}
+
+.icon-container:before {
+    content: "\e7b2";
+}
+
+.icon-database:before {
+    content: "\e7b3";
+}
+
+.icon-sever:before {
+    content: "\e7b4";
+}
+
+.icon-mobile:before {
+    content: "\e7b5";
+}
+
+.icon-tablet:before {
+    content: "\e7b6";
+}
+
+.icon-filter:before {
+    content: "\e7c7";
+}
+
+.icon-deploymentunit:before {
+    content: "\e7d2";
+}
+
+.icon-gateway:before {
+    content: "\e7d7";
+}
+
+.icon-cloud-download:before {
+    content: "\e7d9";
+}
+
+.icon-error:before {
+    content: "\e7df";
+}
+
+.icon-api:before {
+    content: "\e7e1";
+}
+
+.icon-disconnect:before {
+    content: "\e7e2";
+}
+
+.icon-shake:before {
+    content: "\e7e4";
+}
+
+.icon-tag:before {
+    content: "\e7e5";
+}
+
+.icon-wrench:before {
+    content: "\e7e6";
+}
+
+.icon-upload:before {
+    content: "\e7ef";
+}
+
+.icon-download:before {
+    content: "\e7f0";
+}
+
+.icon-stop:before {
+    content: "\e842";
+}
+
+.icon-CodeSandbox:before {
+    content: "\e87e";
+}
+
+.icon-codepen:before {
+    content: "\e87f";
+}
+
+.icon-apartment:before {
+    content: "\e897";
+}
+
 
 
 // color
