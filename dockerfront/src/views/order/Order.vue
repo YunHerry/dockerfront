@@ -36,7 +36,10 @@
           <el-input-number v-model="amount" :min="1" :max="10" />
         </div> -->
         <div class="tab-item">
-          费用
+          <span class="spend"
+            >费用
+            <div class="amount">20</div></span
+          >
           <button @click="submit" class="btn">立刻购买</button>
         </div>
       </el-footer>
@@ -44,34 +47,29 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { Ref, onMounted, ref ,reactive} from "vue";
-import { getPacket, getImages,createOrder } from "@/api/user";
+import { Ref, onMounted, ref, reactive } from "vue";
+import { getPacket, getImages, createOrder } from "@/api/user";
 import { orderPage } from "./pages/DefaultOrder.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 let bandwidth = ref(0);
 let worthy = ref();
 let amount = ref(1);
-const orderTab:Ref<orderPage | null> = ref(null);
+const orderTab: Ref<orderPage | null> = ref(null);
 const nowOptionIndex = ref(0);
 function tapOption(index: number) {
   nowOptionIndex.value = index;
 }
-function submit(e:MouseEvent) {
-  const {packetId,orderConfig} = orderTab?.value?.submit();
-  console.log(packetId,orderConfig)
+function submit(e: MouseEvent) {
+  const { packetId, orderConfig } = orderTab?.value?.submit();
+  console.log(packetId, orderConfig);
   createOrder(packetId, orderConfig).then((res) => {
     console.log("创建订单成功!");
-    router.go(-1);
+    // router.go(-1);
   });
 }
 </script>
 <style lang="scss" scoped>
-.el-footer {
-  .tab-item {
-    display: inline-block;
-  }
-}
 //@TODO bug
 .el-slider {
   .el-slider__button-wrapper {
@@ -264,5 +262,36 @@ function submit(e:MouseEvent) {
       border-bottom-color: #0052d9 !important;
     }
   }
+}
+.tab-item {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+  .spend {
+    display: flex;
+    align-items: center;
+    .amount {
+      margin: 0 8px;
+      margin-right: 20px;
+      font-weight: bold;
+      font-size: 36px;
+    }
+    .amount::before {
+      content: "￥";
+      font-size: 26px;
+    }
+  }
+  .btn {
+    border: 0;
+    padding: 10px 40px;
+    box-sizing: border-box;
+    font-size: 16px;
+    cursor: pointer;
+  }
+}
+.el-footer {
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 12px 0 rgba(24, 44, 108, 0.15);
 }
 </style>

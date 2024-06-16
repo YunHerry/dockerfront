@@ -87,7 +87,7 @@
       </div>
       <div class="base_item">
         <div class="part-title">环境变量</div>
-        <div class="mirror-content">
+        <!-- <div class="mirror-content">
           <el-form ref="formRef" :model="envs" class="demo-dynamic">
             <el-form-item
               v-for="(item, index) in envs"
@@ -111,6 +111,35 @@
               >+</el-button
             >
           </el-form>
+        </div> -->
+        <div class="mirror-content">
+          <i
+            v-show="envs.length < 1"
+            style="display: block"
+            class="iconfont icon-plus port-btn"
+            @click="envs.push([])"
+          ></i>
+          <div class="port-item" v-for="(portItem, index) in envs">
+            <el-input
+              v-model="portItem[0]"
+              placeholder="变量名"
+              clearable
+              style="width: 10%"
+            />
+            <el-input
+              v-model="portItem[1]"
+              placeholder="Value"
+              clearable
+              style="width: 10%"
+            />
+            <div class="port-btns">
+              <i class="iconfont icon-plus port-btn" @click="envs.push([])"></i>
+              <i
+                class="iconfont icon-minus port-btn"
+                @click="envs.splice(index, 1)"
+              ></i>
+            </div>
+          </div>
         </div>
       </div>
       <!-- <div class="bandwidth base_item">
@@ -130,7 +159,7 @@ const nowInstanceIndex = ref(0);
 const nowImageName: Ref<string> = ref("");
 const packetList: Ref<Array<packet>> = ref([]);
 const imageList: Ref<Array<image>> = ref([]);
-const envs: Ref<Array<string>> = ref([]);
+const envs: Ref<Array<Array<string>>> = ref([]);
 const ports: Ref<Array<Array<string>>> = ref([]);
 const nowPorts = ref("");
 const nowContainerName = ref("");
@@ -167,12 +196,13 @@ const resetForm = () => {
 };
 function submit() {
   const orderConfig: orderPacket = {
-    envs: envs.value,
+    envs: envs.value.map(item=>`${item[0]}=${item[1]}`),
     imageName: nowImageName.value,
-    ports: nowPorts.value.split(" "),
+    ports: ports.value.map(item=>`${item[0]}:${item[1]??item[0]}`),
     WorkingDir: "121",
     containerName: nowContainerName.value,
   };
+  console.log(orderConfig);
   return {
     packetId: packetList.value[nowInstanceIndex.value].id,
     orderConfig: orderConfig,
