@@ -13,7 +13,6 @@
                 当前服务器存有镜像
               </div>
             </template>
-            <!-- <template #suffix>/100</template> -->
           </el-statistic>
         </el-col>
       </el-row>
@@ -62,10 +61,10 @@
           <el-table-column width="180">
             <template #header>
               <el-input
-                v-model="input"
+                v-model.lazy="searchVal"
                 size="small"
                 placeholder="关键字检索"
-                @change="search"
+                @change="search($event,false)"
                 clearable
               />
             </template>
@@ -96,10 +95,10 @@
           <el-table-column width="180">
             <template #header>
               <el-input
-                v-model="input"
+                v-model.lazy="centerSearchVal"
                 size="small"
                 placeholder="关键字检索"
-                @change="search"
+                @change="search($event,true)"
                 clearable
               />
             </template>
@@ -151,16 +150,16 @@ let clientRef:any = {};
   },
   () => true
 );
-const nowImagesData = ref([]);
+const nowImagesData: Ref<Array<image>> = ref([]);
 const allImagesData: Ref<Array<image>> = ref([]);
 
-const input = ref("");
-function search(value: string) {
-  let dataFilters = JSON.parse(
-    JSON.stringify(nowImagesData)
-  ) as Array<continer>;
-  dataFilters.filter((item, index) => {
-    return item.name == value;
+const searchVal = ref("");
+const centerSearchVal = ref("");
+function search(value: string,center: boolean) {
+  center?allImagesData.value.splice(0): nowImagesData.value.splice(0)
+  getImage(center,value ,{ page: 1, pageSize: 10 }).then((res) => {
+    center?allImagesData.value.push(...res.data):nowImagesData.value.push(...res.data);
+    center?nowAllPage.value=0:nowLocalPage.value = 0;
   });
 }
 const pulling = ref(false);
@@ -227,7 +226,7 @@ function loadMoreImages(
       isRef<boolean>(isEnd)
     ) {
       pageIndex.value++;
-      getImage(isLocal, { page: pageIndex.value, pageSize: 10 }).then((res) => {
+      getImage(isLocal,searchVal.value ,{ page: pageIndex.value, pageSize: 10 }).then((res) => {
         if (res.data.length) ref.value.push(...res.data);
         //@TODO
         else (isEnd as Ref).value = true;
@@ -238,17 +237,13 @@ function loadMoreImages(
       typeof isEnd == "boolean"
     ) {
       pageIndex++;
-      getImage(isLocal, { page: pageIndex, pageSize: 10 }).then((res) => {
+      getImage(isLocal,centerSearchVal.value ,{ page: pageIndex, pageSize: 10 }).then((res) => {
         if (res.data.length) ref.push(...res.data);
         else isEnd = true;
       });
     }
   };
 }
-onMounted(() => {
-  // loadMoreImages(true, allImagesData, nowAllPage)();
-  // loadMoreImages(false, nowImagesData, nowLocalPage)();
-});
 
 </script>
 <style lang="scss" scoped>

@@ -87,31 +87,6 @@
       </div>
       <div class="base_item">
         <div class="part-title">环境变量</div>
-        <!-- <div class="mirror-content">
-          <el-form ref="formRef" :model="envs" class="demo-dynamic">
-            <el-form-item
-              v-for="(item, index) in envs"
-              :key="index"
-              :label="''"
-              :prop="'myenvs.' + index + '.value'"
-              :rules="{
-                required: true,
-                message: '环境变量不能为空',
-                trigger: 'blur',
-              }"
-            >
-              <el-input v-model="envs[index]" style="width: 50%" />
-              <i class="iconfont icon-plus port-btn" @click="addDomain"></i>
-              <i
-                class="iconfont icon-minus port-btn"
-                @click="removeDomain(index)"
-              ></i>
-            </el-form-item>
-            <el-button @click="addDomain" v-show="envs.length == 0"
-              >+</el-button
-            >
-          </el-form>
-        </div> -->
         <div class="mirror-content">
           <i
             v-show="envs.length < 1"
@@ -183,17 +158,6 @@ function tapInstance(index: number) {
 function tapImage(name: string) {
   nowImageName.value = name;
 }
-const removeDomain = (index: number) => {
-  envs.value.splice(index, 1);
-};
-const addDomain = () => {
-  envs.value.push("sdfs");
-};
-const resetForm = () => {
-  if (formRef.value) {
-    formRef.value.resetFields();
-  }
-};
 function submit() {
   const orderConfig: orderPacket = {
     envs: envs.value.map(item=>`${item[0]}=${item[1]}`),

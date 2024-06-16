@@ -143,14 +143,15 @@ export function getPacket(
   });
 }
 export function getImage(
-  isLocal:boolean,pageParam?: pageParam
+  local:boolean=false,label:string="",pageParam?: pageParam
 ): Promise<requestResponse<Array<image>>> {
   return request({
     url: "/ibs/api/images",
     method: "POST",
     data: {
       pageParam,
-      center:isLocal
+      center:local,
+      label: label
     },
   });
 }
