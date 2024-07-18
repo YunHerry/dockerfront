@@ -1,9 +1,9 @@
 <template>
   <div class="home">
     <el-container>
-        <el-header>
-          <UserTop :show-left="true" :show-logo="true" :show-nav="true"></UserTop>
-        </el-header>
+      <el-header>
+        <UserTop :show-left="true" :show-logo="true" :show-nav="true"></UserTop>
+      </el-header>
       <el-main>
         <el-carousel height="500px">
           <el-carousel-item v-for="item in 4" :key="item">
@@ -30,7 +30,7 @@
         </div>
         <div class="banner">
           <div class="title">立刻体验,加速云上构建</div>
-          <button class="buy">立即购买</button>
+          <RouterLink class="buy" :to="'/order'">立即购买</RouterLink>
         </div>
       </el-main>
       <el-footer>
@@ -75,7 +75,7 @@ import beianFooter from "/src/components/beianFooter.vue";
 }
 
 .el-main {
-  margin-top: 0!important;
+  margin-top: 0 !important;
   padding: 0 !important;
   .el-carousel__item:nth-child(n) {
     background-color: #99a9bf;
@@ -116,7 +116,7 @@ import beianFooter from "/src/components/beianFooter.vue";
     }
   }
   .banner {
-    @extend %flex-vertical-center ;
+    @extend %flex-vertical-center;
     flex-direction: column;
     height: 300px;
     background-image: url("/public/img/background/index_background.png"),
@@ -135,6 +135,10 @@ import beianFooter from "/src/components/beianFooter.vue";
       background-color: $white;
       border: 0;
       color: $default-text-color;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 }
