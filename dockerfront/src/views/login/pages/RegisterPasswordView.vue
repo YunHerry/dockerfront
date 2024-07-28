@@ -14,12 +14,12 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { isEmpty } from "@/utils/stringUtils";
-import request from "@/utils/request";
+import { isEmpty } from "@common/utils/stringUtils";
+import request from "@common/utils/request";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import { register } from "@/api/user";
+import { register } from "@common/api/user";
 const emit = defineEmits(["commitRegisterInfo"]);
 const nowWarn = ref(0);
 const password = ref("");

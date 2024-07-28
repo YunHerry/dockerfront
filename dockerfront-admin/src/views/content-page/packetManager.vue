@@ -96,7 +96,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getPacket, createPacket, updatePacket } from "@/api/admin";
+import { getPacket, createPacket, updatePacket } from "@common/api/user";
 import UserTop from "@/components/user/UserTop.vue";
 import { Ref, mergeProps, onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";

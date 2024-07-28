@@ -234,7 +234,7 @@
 <script lang="ts" setup>
 import Logo from "@/components/Logo.vue";
 import store from "@/store";
-import { isUserInfoExpire } from "@/utils/auth";
+import { isUserInfoExpire } from "@common/utils/auth";
 import { ElMessage } from "element-plus";
 import { Ref, onMounted, onUpdated, ref } from "vue";
 let userLoginStatus = ref(false);

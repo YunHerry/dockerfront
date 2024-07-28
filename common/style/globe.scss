@@ -1,9 +1,13 @@
+@import url('./subStyle/colors.scss');
+@import url('./subStyle/fonsize.scss');
+@import url('./subStyle/shadow.scss');
+
 //icon about
 @font-face {
     font-family: "iconfont";
-    src: url('@assets/style/iconfont/iconfont.woff2') format('woff2'),
-        url('@assets/style/iconfont/iconfont.woff') format('woff'),
-        url('@assets/style/iconfont/iconfont.ttf') format('truetype');
+    src: url('@common/iconfont/iconfont.woff2') format('woff2'),
+        url('@common/iconfont/iconfont.woff') format('woff'),
+        url('@common/iconfont/iconfont.ttf') format('truetype');
 }
 
 .iconfont {

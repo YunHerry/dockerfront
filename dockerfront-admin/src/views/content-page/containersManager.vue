@@ -32,7 +32,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { getContainers, selectContainers } from "@/api/admin";
+import {  getContainersByAdmin, selectContainers } from "@common/api/user";
 import Logo from "@/components/Logo.vue";
 import { Ref, onMounted, ref } from "vue";
 import { ElTable, ElTableColumn, ElInput, ElButton } from "element-plus";
@@ -52,7 +52,7 @@ function search(value: string) {
 }
 let tableData: Ref<Array<continer>> = ref([]);
 onMounted(() => {
-  getContainers().then((res) => {
+  getContainersByAdmin().then((res) => {
     tableData.value.push(...res.data);
   });
   // continerStatusFormatUtils.getValues(tableData.value);

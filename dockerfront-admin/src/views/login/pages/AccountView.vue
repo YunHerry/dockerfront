@@ -25,7 +25,7 @@
 </template>
 <script lang="ts" setup>
 import Logo from "@/components/Logo.vue";
-import { isEmpty } from "@/utils/stringUtils";
+import { isEmpty } from "@common/utils/stringUtils";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 const username = ref();

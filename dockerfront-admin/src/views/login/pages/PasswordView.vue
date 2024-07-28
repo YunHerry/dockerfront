@@ -14,7 +14,7 @@
 import Logo from "@/components/Logo.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { isEmpty } from "@/utils/stringUtils";
+import { isEmpty } from "@common/utils/stringUtils";
 import { ElMessage } from "element-plus";
 import store from "@/store";
 

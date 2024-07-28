@@ -48,7 +48,7 @@
 </template>
 <script lang="ts" setup>
 import { Ref, onMounted, ref, reactive } from "vue";
-import { getPacket, getImages, createOrder } from "@/api/user";
+import { getPacket, getImages, createOrder } from "@common/api/user";
 import { orderPage } from "./pages/DefaultOrder.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();

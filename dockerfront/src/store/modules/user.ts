@@ -1,6 +1,6 @@
-import { login,getInfo} from "@/api/user";
-import { getUserInfo,setUserInfo,clearUserInfo } from "@/utils/auth";
-import { isEmpty } from "@/utils/stringUtils";
+import { login,getInfo } from "@common/api/user";
+import { getUserInfo,setUserInfo,clearUserInfo } from "@common/utils/auth";
+import { isEmpty } from "@common/utils/stringUtils";
 import { ElMessage } from "element-plus";
 import { Commit } from "vuex";
 import store from "..";
@@ -56,13 +56,13 @@ const actions = {
           setUserInfo(data);
           resolve();
         })
-        .catch((err) => {
-          console.log(err);
-          ElMessage({
-            message: "网络连接异常,请重试!"
-          })
-          rject("网络连接异常,请重试!");
-        });
+        // .catch((err) => {
+        //   console.log(err);
+        //   ElMessage({
+        //     message: "网络连接异常,请重试!"
+        //   })
+        //   rject("网络连接异常,请重试!");
+        // });
     });
   },
   getInfo({ commit }: { commit: Commit }): Promise<void> {

@@ -85,10 +85,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { getContainers } from "@/api/admin";
+import { getContainersByAdmin } from "@common/api/user";
 import UserTop from "@/components/user/UserTop.vue";
 import { Ref, onMounted, ref } from "vue";
-import { getValue, getValues } from "@/utils/continerStatusFormatUtils";
+import { getValue, getValues } from "@common/utils/continerStatusFormatUtils";
 import { useRoute } from "vue-router";
 const input = ref("");
 let page = 1;
@@ -106,7 +106,7 @@ function search(value: string) {
 }
 let tableData: Ref<Array<continer>> = ref([]);
 onMounted(() => {
-  getContainers(page, number).then((res) => {
+  getContainersByAdmin(page, number).then((res) => {
     tableData.value.push(...res.data);
   });
   // continerStatusFormatUtils.getValues(tableData.value);

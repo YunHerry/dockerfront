@@ -50,10 +50,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { getContainers } from "@/api/user";
+import { getContainers } from "@common/api/user";
 import UserTop from "@/components/user/UserTop.vue";
 import { Ref, onMounted, ref } from "vue";
-import { getValue, getValues } from "@/utils/continerStatusFormatUtils";
+import { getValue, getValues } from "@common/utils/continerStatusFormatUtils";
 import { useRoute } from "vue-router";
 const input = ref("");
 let page = 1;

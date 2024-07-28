@@ -45,9 +45,9 @@
 }
 </style>
 <script lang="ts" setup>
-import { exec } from "@/api/user";
+import { exec } from "@common/api/user";
 import store from "@/store";
-import { websocketInit } from "@/utils/websocket";
+import { websocketInit } from "@common/utils/websocket";
 import { Ref, ref } from "vue";
 import { useRoute } from "vue-router";
 import Terminal, { Message } from "vue-web-terminal";

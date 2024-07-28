@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "common": "file:../common",
     "@types/websocket": "^1.0.10",
     "core-js": "^3.8.3",
     "echarts": "^5.4.3",

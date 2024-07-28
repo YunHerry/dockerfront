@@ -10,9 +10,8 @@ import ContainerDashboard from "@/views/ContainerDashboard.vue";
 import UserDashboard from "@/views/UserDashboard.vue";
 import WebShell from "../views/WebShell.vue";
 import { ElMessage } from "element-plus";
-import { h } from "vue";
 import store from "@/store";
-import { isEmpty } from "@/utils/stringUtils";
+import { isEmpty } from "@common/utils/stringUtils";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",

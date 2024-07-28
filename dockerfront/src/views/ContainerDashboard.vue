@@ -173,13 +173,13 @@ import {
   getContainerDataList,
   moveFiletoDownloadSpace,
   download,
-} from "@/api/user";
+} from "@common/api/user";
 import { continerWorkStatus, continerStatus } from "@/constant";
 import { useRoute } from "vue-router";
 import store from "@/store";
 import { IMessageEvent,request, w3cwebsocket } from "websocket";
 import { ElMessage } from "element-plus";
-import { websocketInit } from "@/utils/websocket";
+import { websocketInit } from "@common/utils/websocket";
 import type Node from "element-plus/es/components/tree/src/model/node";
 const route = useRoute();
 const id = route.params.id as string;

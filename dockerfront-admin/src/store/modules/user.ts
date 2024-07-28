@@ -1,5 +1,5 @@
-import { login,getInfo} from "@/api/admin";
-import { getUserInfo,setUserInfo,clearUserInfo } from "@/utils/auth";
+import { login,getInfo} from "@common/api/user";
+import { getUserInfo,setUserInfo,clearUserInfo } from "@common/utils/auth";
 import { ElMessage } from "element-plus";
 import { Commit } from "vuex";
 import store from "..";

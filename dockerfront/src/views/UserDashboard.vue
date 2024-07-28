@@ -86,7 +86,7 @@
 </template>
 <script lang="ts" setup>
 import UserTop from "@/components/user/UserTop.vue";
-import { getOrders,payOrder } from "@/api/user";
+import { getOrders,payOrder } from "@common/api/user";
 import { Ref, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();

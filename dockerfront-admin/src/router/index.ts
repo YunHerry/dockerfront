@@ -6,7 +6,7 @@ import ContainerDashboard from "@/views/ContainerDashboard.vue";
 import UserDashboard from "@/views/UserDashboard.vue";
 import WebShell from "@/views/WebShell.vue";
 import store from "@/store";
-import { isEmpty } from "@/utils/stringUtils";
+import { isEmpty } from "@common/utils/stringUtils";
 import { ElMessage } from "element-plus";
 const routes: Array<RouteRecordRaw> = [
   {

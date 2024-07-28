@@ -1,0 +1,19 @@
+{
+  "name": "common-pack",
+  "version": "1.0.0",
+  "description": "common component,style",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "HerryYun",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "js-cookie": "^3.0.5",
+    "@types/js-cookie": "^3.0.3",
+    "element-plus": "^2.6.1",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.1.0"
+  }
+}

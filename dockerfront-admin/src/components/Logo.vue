@@ -1,6 +1,6 @@
 <template>
   <div :style="containerStyle" class="logo">
-    <img src="@/assets/logo.png" :style="imageStyle" alt="Logo" />
+    <img src="@common/assets/logo.png" :style="imageStyle" alt="Logo" />
   </div>
 </template>
 

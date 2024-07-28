@@ -128,7 +128,7 @@
 </template>
 <script lang="ts" setup>
 import { Ref, onMounted, ref, defineEmits } from "vue";
-import { getPacket, getImages } from "@/api/user";
+import { getPacket, getImages } from "@common/api/user";
 import type { FormInstance } from "element-plus";
 const nowInstanceIndex = ref(0);
 const nowImageName: Ref<string> = ref("");

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@types/websocket": "^1.0.10",
+    "common-pack": "file:../common",
     "core-js": "^3.8.3",
     "echarts": "^5.4.3",
     "register-service-worker": "^1.7.2",

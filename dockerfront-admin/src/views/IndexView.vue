@@ -2,7 +2,7 @@
   <div class="index-content">
     <div class="menu-content">
       <div class="logo">
-        <img src="@/assets/logo.png" alt="" />
+        <img src="@common/assets/logo.png" alt="" />
         <span class="logo-name">docker-admin</span>
       </div>
       <div class="current-item" :style="{'top':(nowViewIndex * 60)+61 + 'px'}"></div>

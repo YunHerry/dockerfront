@@ -2993,6 +2993,10 @@
   "resolved" "https://registry.npmmirror.com/commander/-/commander-8.3.0.tgz"
   "version" "8.3.0"
 
+"common-pack@file:../common":
+  "resolved" "file:../common"
+  "version" "1.0.0"
+
 "common-tags@^1.8.0":
   "integrity" "sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA=="
   "resolved" "https://registry.npmmirror.com/common-tags/-/common-tags-1.8.2.tgz"

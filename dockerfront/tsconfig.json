@@ -18,6 +18,9 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@common/*": [
+         "../common/*"
       ]
     },
     "lib": [
@@ -33,7 +36,8 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "src/types/*.d.ts"
+    "src/types/*.d.ts",
+    "../common/types"
   ],
   "exclude": [
     "node_modules"

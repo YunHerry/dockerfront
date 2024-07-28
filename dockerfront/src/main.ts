@@ -7,7 +7,10 @@ import "element-plus/dist/index.css";
 import 'vue-web-terminal/lib/theme/dark.css'
 import Terminal from "vue-web-terminal";
 import echarts from 'echarts';
+import { initRequestInstance } from "@common/api/user";
+import store from "./store";
 const app = createApp(App);
 //@ts-ignore
 app.use(router).use(Terminal).use(ElementPlus).mount("#app");
 app.config.globalProperties.$echarts = echarts;
+initRequestInstance(router,store);

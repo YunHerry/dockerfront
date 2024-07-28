@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { createPacket } from "@/api/admin.ts";
+import { createPacket } from "@common/api/user";
 import { useRouter } from "vue-router";
 const router = useRouter();
 

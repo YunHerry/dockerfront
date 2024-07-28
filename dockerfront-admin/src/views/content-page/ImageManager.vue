@@ -119,9 +119,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { getImage, pullImage } from "@/api/admin";
+import { getImage, pullImage } from "@common/api/user";
 import store from "@/store";
-import { websocketInit } from "@/utils/websocket";
+import { websocketInit } from "@common/utils/websocket";
 import { Upload } from "@element-plus/icons-vue";
 import { Directive, Ref, isRef, onDeactivated, onMounted, ref } from "vue";
 //websocket
